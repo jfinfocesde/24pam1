@@ -1,5 +1,169 @@
 ---
-sidebar_position: 1
-draft: true
+sidebar_position: 3
+draft: false
 slug: /semana3
 ---
+
+# Semana 3
+
+## Trabajando con Tipos de Datos en Java: Primitivos, Envolventes, Casteo y Parseo
+
+### Datos Primitivos en Java
+
+Los datos primitivos son los tipos de datos más básicos en Java. Son los bloques de construcción para crear variables y almacenar información. Hay ocho tipos de datos primitivos en Java:
+
+1. **byte:** Almacena un valor entero de 8 bits (de -128 a 127).
+2. **short:** Almacena un valor entero de 16 bits (de -32,768 a 32,767).
+3. **int:** Almacena un valor entero de 32 bits (de -2,147,483,648 a 2,147,483,647).
+4. **long:** Almacena un valor entero de 64 bits (de -9,223,372,036,854,775,808 a 9,223,372,036,854,775,807).
+5. **float:** Almacena un número de punto flotante de 32 bits (con una precisión de 7 dígitos).
+6. **double:** Almacena un número de punto flotante de 64 bits (con una precisión de 15 dígitos).
+7. **char:** Almacena un carácter Unicode (un solo carácter).
+8. **boolean:** Almacena un valor lógico (verdadero o falso).
+
+**Ejemplos:**
+
+```java
+byte edad = 25;
+short codigoPostal = 01234;
+int cantidad = 10000;
+long numeroTelefono = 1234567890;
+float precio = 19.99f;
+double pi = 3.141592653589793;
+char inicial = 'A';
+boolean activo = true;
+```
+
+### Clases Envolventes (Wrapper Classes)
+
+Las clases envolventes son clases que encapsulan los tipos de datos primitivos en objetos. Permiten trabajar con datos primitivos como objetos, lo cual facilita la gestión de memoria y proporciona funcionalidades adicionales. Cada tipo de dato primitivo tiene su clase envolvente correspondiente:
+
+| Tipo Primitivo | Clase Envolvente |
+|---|---|
+| byte | Byte |
+| short | Short |
+| int | Integer |
+| long | Long |
+| float | Float |
+| double | Double |
+| char | Character |
+| boolean | Boolean |
+
+**Ejemplos:**
+
+```java
+Integer edad = 25;
+Short codigoPostal = 01234;
+Long numeroTelefono = 1234567890L;
+Double precio = 19.99;
+Character inicial = 'A';
+Boolean activo = true;
+```
+
+**Uso de Wrapper Classes:**
+
+* **Autoboxing/Unboxing:** Java convierte automáticamente un tipo primitivo a su clase envolvente (autoboxing) o viceversa (unboxing) cuando es necesario.
+* **Métodos útiles:** Las clases envolventes ofrecen métodos útiles para trabajar con datos, como conversiones, comparaciones y operaciones matemáticas.
+
+### Casteo y Parseo de Datos
+
+* **Casteo:** Es la conversión de un tipo de dato a otro tipo de dato compatible. Se realiza utilizando un operador de casting: `(tipo_destino) variable`. El casteado puede implicar pérdida de información si el tipo de destino es más pequeño que el tipo original.
+
+**Ejemplo:**
+
+```java
+double valor = 3.14159;
+int entero = (int) valor; // Casteo de double a int (se pierde la parte decimal)
+```
+
+* **Parseo:** Es la conversión de una cadena de texto a un tipo de dato numérico. Se realiza utilizando métodos específicos de cada clase envolvente.
+
+**Ejemplo:**
+
+```java
+String numeroStr = "1234";
+int numeroInt = Integer.parseInt(numeroStr); // Parseo de String a int
+```
+
+**Ejemplos de Casteo y Parseo:**
+
+```java
+int entero = 10;
+double decimal = 2.5;
+
+// Casteo de int a double
+double nuevoDecimal = (double) entero; 
+
+// Casteo de double a int (se pierde la parte decimal)
+int nuevoEntero = (int) decimal;
+
+// Parseo de String a int
+String numeroStr = "1234";
+int numeroInt = Integer.parseInt(numeroStr);
+
+// Parseo de String a double
+String decimalStr = "3.14159";
+double decimalValor = Double.parseDouble(decimalStr);
+```
+
+**Recomendaciones:**
+
+* Es importante tener en cuenta la compatibilidad de los tipos de datos al realizar un casteado o parseo.
+* El parseo de una cadena de texto a un tipo de dato numérico puede generar una excepción `NumberFormatException` si la cadena no representa un número válido.
+* Se recomienda usar las funciones de parseo de las clases envolventes en lugar de intentar convertir manualmente una cadena de texto a un tipo de dato numérico.
+
+## Actividad de clase
+
+### Actividad: Manipulando Datos en Java (con Entrega en GitHub)
+
+**Objetivo:** Fortalecer la comprensión de datos primitivos, clases envolventes, casteos y parseos en Java.
+
+**Instrucciones:**
+
+1. **Crea un nuevo proyecto de Java:** Abre tu IDE favorito (Eclipse, IntelliJ IDEA, NetBeans, etc.) y crea un nuevo proyecto Java llamado "Datos".
+2. **Crea un repositorio en GitHub:** Crea un nuevo repositorio público en GitHub llamado "ManipulandoDatosJava".
+3. **Inicializa un repositorio Git local:** Dentro del directorio de tu proyecto Java, inicializa un repositorio Git:
+   ```bash
+   git init
+   ```
+4. **Implementa las siguientes tareas dentro de la clase "Datos"**:
+
+   a) **Declaración de variables:**
+      - Declara una variable `edad` de tipo `byte` con el valor 25.
+      - Declara una variable `codigoPostal` de tipo `short` con el valor 12345.
+      - Declara una variable `salario` de tipo `double` con el valor 3500.00.
+      - Declara una variable `nombre` de tipo `String` con el valor "Juan Pérez".
+      - Declara una variable `esMayorDeEdad` de tipo `boolean` con el valor `true`.
+
+   b) **Uso de clases envolventes:**
+      - Convierte la variable `edad` a un objeto `Byte` utilizando autoboxing.
+      - Convierte el objeto `Byte` de `edad` a un valor `byte` utilizando unboxing.
+      - Convierte la variable `salario` a un objeto `Double` utilizando autoboxing.
+      - Imprime el valor de la variable `nombre` usando el método `toString()` de la clase `String`.
+
+   c) **Casteo de datos:**
+      - Convierte la variable `salario` a un valor `int` utilizando un casteado.
+      - Imprime el valor de la variable `salario` como entero.
+      - Convierte la variable `codigoPostal` a un valor `long` utilizando un casteado.
+      - Imprime el valor de la variable `codigoPostal` como long.
+      - ¿Qué sucede con la información al realizar el casteado?
+
+   d) **Parseo de datos:**
+      - Crea una variable `numeroStr` de tipo `String` con el valor "12345678".
+      - Convierte la variable `numeroStr` a un valor `int` utilizando el método `parseInt()` de la clase `Integer`.
+      - Crea una variable `decimalStr` de tipo `String` con el valor "3.14159".
+      - Convierte la variable `decimalStr` a un valor `double` utilizando el método `parseDouble()` de la clase `Double`.
+      - Imprime los valores de las variables `numeroInt` y `decimalValor`.
+
+5. **Análisis de resultados:**
+   - **Comenta en el código los resultados obtenidos en cada paso de la actividad.**  Estos comentarios deben ser breves y concisos, explicando lo que sucede en cada sección del código. 
+   - **Documenta las respuestas a las siguientes preguntas en el archivo `README.md` del repositorio de GitHub:**
+     - ¿Qué diferencias hay entre castear y parsear?
+     - ¿En qué situaciones sería útil utilizar cada uno de estos procesos?
+     - ¿Qué aspectos debes tener en cuenta al realizar un casteado?
+
+6. **Realiza commit y push:** 
+   - Agrega los archivos modificados al repositorio Git: `git add .`
+   - Realiza un commit con un mensaje descriptivo: `git commit -m "Implementación de la actividad"`
+   - Envía los cambios al repositorio de GitHub: `git push origin main`
+7. **Entrega el enlace del repositorio:**  Envia al profesor el enlace al repositorio de GitHub donde se encuentra tu proyecto.
