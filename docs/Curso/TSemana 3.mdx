@@ -291,3 +291,171 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 Con este código completo, tienes una base sólida para implementar un sistema de gestión de clientes y productos en tu aplicación Android.
 
 
+## Actividad 4
+
+
+```java
+import java.util.ArrayList;
+
+public class Producto {
+    private String nombre;
+    private double precio;
+    private int stock;
+
+    // Constructor por defecto
+    public Producto() {
+        nombre = "Sin nombre";
+        precio = 0.0;
+        stock = 0;
+    }
+
+    // Constructor con parámetros
+    public Producto(String nombre, double precio, int stock) {
+        this.nombre = nombre;
+        this.precio = precio;
+        this.stock = stock;
+    }
+
+    // Getters y setters
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    // Métodos
+    public void mostrarInformacion() {
+        System.out.println("Nombre: " + nombre);
+        System.out.println("Precio: " + precio);
+        System.out.println("Stock: " + stock);
+    }
+
+    public void actualizarStock(int cantidad) {
+        if (cantidad >= 0) {
+            stock += cantidad;
+        } else {
+            System.out.println("Error: La cantidad de stock debe ser un valor positivo.");
+        }
+    }
+
+    public double calcularPrecioTotal() {
+        return precio * stock;
+    }
+}
+
+public class Tienda {
+    private ArrayList<Producto> productos;
+
+    // Constructor por defecto
+    public Tienda() {
+        productos = new ArrayList<>();
+    }
+
+    // Métodos
+    public void agregarProducto(Producto producto) {
+        productos.add(producto);
+    }
+
+    public Producto buscarProductoPorNombre(String nombre) {
+        for (Producto producto : productos) {
+            if (producto.getNombre().equalsIgnoreCase(nombre)) {
+                return producto;
+            }
+        }
+        return null;
+    }
+
+    public double calcularValorTotalInventario() {
+        double valorTotal = 0;
+        for (Producto producto : productos) {
+            valorTotal += producto.calcularPrecioTotal();
+        }
+        return valorTotal;
+    }
+
+    public void mostrarProductosConStockBajo(int limite) {
+        System.out.println("Productos con stock bajo:");
+        for (Producto producto : productos) {
+            if (producto.getStock() < limite) {
+                producto.mostrarInformacion();
+                System.out.println("--------------------");
+            }
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Tienda tienda = new Tienda();
+
+        // Crear productos
+        Producto producto1 = new Producto("Camiseta", 15.99, 20);
+        Producto producto2 = new Producto("Pantalón", 39.99, 10);
+        Producto producto3 = new Producto("Zapatos", 60.99, 5);
+
+        // Agregar productos a la tienda
+        tienda.agregarProducto(producto1);
+        tienda.agregarProducto(producto2);
+        tienda.agregarProducto(producto3);
+
+        // Buscar un producto
+        Producto productoEncontrado = tienda.buscarProductoPorNombre("Pantalón");
+        if (productoEncontrado != null) {
+            System.out.println("Producto encontrado:");
+            productoEncontrado.mostrarInformacion();
+        } else {
+            System.out.println("Producto no encontrado.");
+        }
+
+        // Mostrar productos con stock bajo
+        tienda.mostrarProductosConStockBajo(10);
+
+        // Calcular valor total del inventario
+        double valorTotalInventario = tienda.calcularValorTotalInventario();
+        System.out.println("Valor total del inventario: " + valorTotalInventario);
+    }
+}
+```
+
+**Explicación del código:**
+
+* **Clase `Producto`:**
+    * Los atributos `nombre`, `precio` y `stock` son privados para encapsular los datos.
+    * Se implementan getters y setters para acceder y modificar estos atributos.
+    * Los métodos `mostrarInformacion()`, `actualizarStock()` y `calcularPrecioTotal()` proporcionan funcionalidades específicas para los objetos `Producto`.
+* **Clase `Tienda`:**
+    * El atributo `productos` es una lista de objetos `Producto` para almacenar los productos.
+    * Los métodos `agregarProducto()`, `buscarProductoPorNombre()`, `calcularValorTotalInventario()` y `mostrarProductosConStockBajo()` gestionan la colección de productos.
+* **Clase `Main`:**
+    * Se crea una instancia de la clase `Tienda`.
+    * Se crean objetos `Producto` con diferentes nombres, precios y stocks.
+    * Se agregan los productos a la tienda.
+    * Se busca un producto específico.
+    * Se muestran los productos con stock bajo.
+    * Se calcula el valor total del inventario.
+
+**Ejecución del código:**
+
+Al ejecutar el código, se mostrará la información del producto "Pantalón", se mostrarán los productos "Zapatos" y "Pantalón" con stock bajo, y se calculará el valor total del inventario. 
+
+Recuerda que esta es una solución básica, puedes ampliar la funcionalidad agregando más métodos, como actualizar el precio de un producto, realizar un pedido, etc. También puedes implementar una interfaz gráfica para mejorar la interacción con el usuario.
+
+
