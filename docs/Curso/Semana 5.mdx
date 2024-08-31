@@ -3,3 +3,522 @@ sidebar_position: 5
 draft: true
 slug: /semana5
 ---
+# Semana 5
+
+## Sobrecarga de Métodos y Constructores en POO Java: Flexibilidad a la hora de programar
+
+La sobrecarga en POO Java consiste en definir **varios métodos o constructores con el mismo nombre** pero con **diferentes parámetros**. Esto permite que una clase tenga métodos o constructores con el mismo nombre pero que se comporten de manera diferente según los datos que reciban.
+
+**Sobrecarga de métodos:**
+
+**Ejemplo:**
+
+```java
+public class Calculadora {
+    public int sumar(int num1, int num2) {
+        return num1 + num2;
+    }
+
+    public double sumar(double num1, double num2) {
+        return num1 + num2;
+    }
+
+    public int sumar(int num1, int num2, int num3) {
+        return num1 + num2 + num3;
+    }
+}
+```
+
+**Explicación:**
+
+* La clase `Calculadora` tiene tres métodos llamados `sumar`.
+* El primer `sumar` recibe dos enteros como parámetros.
+* El segundo `sumar` recibe dos números decimales como parámetros.
+* El tercer `sumar` recibe tres enteros como parámetros.
+
+**Uso de la sobrecarga de métodos:**
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Calculadora calculadora = new Calculadora();
+        System.out.println(calculadora.sumar(5, 3)); // Llama al primer sumar
+        System.out.println(calculadora.sumar(2.5, 1.7)); // Llama al segundo sumar
+        System.out.println(calculadora.sumar(1, 2, 3)); // Llama al tercer sumar
+    }
+}
+```
+
+**Sobrecarga de constructores:**
+
+**Ejemplo:**
+
+```java
+public class Persona {
+    private String nombre;
+    private int edad;
+
+    public Persona() {
+        nombre = "Sin nombre";
+        edad = 0;
+    }
+
+    public Persona(String nombre) {
+        this.nombre = nombre;
+        edad = 0;
+    }
+
+    public Persona(String nombre, int edad) {
+        this.nombre = nombre;
+        this.edad = edad;
+    }
+}
+```
+
+**Explicación:**
+
+* La clase `Persona` tiene tres constructores.
+* El primer constructor no recibe parámetros.
+* El segundo constructor recibe el nombre como parámetro.
+* El tercer constructor recibe el nombre y la edad como parámetros.
+
+**Uso de la sobrecarga de constructores:**
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Persona persona1 = new Persona(); // Constructor sin parámetros
+        Persona persona2 = new Persona("Juan"); // Constructor con nombre
+        Persona persona3 = new Persona("Ana", 25); // Constructor con nombre y edad
+    }
+}
+```
+
+**Beneficios de la sobrecarga:**
+
+* **Flexibilidad:** Permite crear métodos o constructores con diferentes comportamientos según los datos que reciban.
+* **Reutilización de código:** Se puede reutilizar el mismo nombre de método o constructor con diferentes conjuntos de parámetros.
+* **Claridad del código:** Facilita la lectura y comprensión del código, ya que se utilizan nombres de métodos o constructores coherentes.
+
+## Ejemplo Clase "Auto"
+
+La clase Auto es una representación de un vehículo en código, definiendo sus atributos como marca, modelo, año, precio y color, además de una velocidad máxima constante. Permite crear distintos tipos de autos a través de sus constructores, proporciona métodos para obtener y modificar sus características (getters y setters), y simula acciones como acelerar y calcular impuestos.
+
+### Clase "Auto"
+
+```java
+public class Auto {
+
+    // Atributos
+    private String marca;
+    private String modelo;
+    private int año;
+    private double precio;
+    private String color;
+
+    // Atributo constante
+    private static final int MAX_VELOCIDAD = 250;
+
+    // Constructor por defecto
+    public Auto() {
+        this.marca = "Desconocido";
+        this.modelo = "Desconocido";
+        this.año = 2000;
+        this.precio = 0.0;
+        this.color = "Gris";
+    }
+
+    // Constructor con marca y modelo
+    public Auto(String marca, String modelo) {
+        this.marca = marca;
+        this.modelo = modelo;
+        this.año = 2023; // Año por defecto para autos nuevos
+        this.precio = 0.0;
+        this.color = "Blanco"; 
+    }
+
+    // Constructor con todos los atributos
+    public Auto(String marca, String modelo, int año, double precio, String color) {
+        this.marca = marca;
+        this.modelo = modelo;
+        this.año = año;
+        this.precio = precio;
+        this.color = color;
+    }
+
+    // Getters y Setters
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public int getAño() {
+        return año;
+    }
+
+    public void setAño(int año) {
+        this.año = año;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    // Métodos públicos
+    public String obtenerInfo() {
+        return "Marca: " + marca + "\nModelo: " + modelo + "\nAño: " + año + "\nPrecio: $" + precio + "\nColor: " + color;
+    }
+
+    public void acelerar(int velocidad) {
+        if (velocidad > MAX_VELOCIDAD) {
+            System.out.println("Velocidad máxima excedida. La velocidad se limita a " + MAX_VELOCIDAD + " km/h.");
+        } else {
+            System.out.println("Acelerando a " + velocidad + " km/h.");
+        }
+    }
+
+    // Métodos privados
+    private void calcularImpuestos() {
+        // Lógica para calcular los impuestos basados en el precio del auto
+        double impuestos = precio * 0.19; // Impuesto al Valor Agregado (IVA) en Colombia
+        System.out.println("Impuestos estimados: $" + impuestos);
+    }
+
+    public void mostrarImpuestos() {
+        // Este método llama al método privado para calcular los impuestos
+        calcularImpuestos();
+    }    
+}
+```
+
+### Uso de la clase "Auto"
+
+```java
+public static void main(String[] args) {
+    // Creación de objetos de la clase Auto
+    Auto auto1 = new Auto();
+    Auto auto2 = new Auto("Chevrolet", "Spark");
+    Auto auto3 = new Auto("Renault", "Logan", 2021, 45000000.0, "Azul");
+
+    // Impresión de información de los autos
+    System.out.println("Auto 1:");
+    System.out.println(auto1.obtenerInfo());
+    System.out.println("Auto 2:");
+    System.out.println(auto2.obtenerInfo());
+    System.out.println("Auto 3:");
+    System.out.println(auto3.obtenerInfo());
+
+    // Ejemplo de uso de métodos
+    auto3.acelerar(200);
+    auto3.mostrarImpuestos();
+}
+```
+
+### **Explicación del código:**
+
+La clase `Auto` es como un molde para crear autos. Este molde define cómo se construyen los autos y qué características tienen.
+
+**Atributos:** El molde tiene "cajones" donde se almacenan las características de cada auto, como:
+
+* **Marca:** La marca del auto (por ejemplo, Chevrolet, Renault).
+* **Modelo:** El modelo específico del auto (por ejemplo, Spark, Logan).
+* **Año:** El año en que se fabricó el auto.
+* **Precio:** El valor del auto.
+* **Color:** El color de la pintura del auto.
+
+Además, hay un "cajón especial" que almacena una regla fija:
+
+* **Velocidad máxima:**  Un límite de velocidad que nunca se puede superar.
+
+**Constructores:** Hay diferentes maneras de usar el molde para crear autos:
+
+* **Constructor por defecto:** Crea un auto básico con información genérica (marca "Desconocido", modelo "Desconocido", etc.).
+* **Constructor con marca y modelo:** Crea un auto con marca y modelo específicos, pero con año y precio predeterminados.
+* **Constructor completo:** Crea un auto personalizado con marca, modelo, año, precio y color.
+
+**Getters y Setters:** Son como las "ventanas" del molde que te permiten ver o cambiar el contenido de los cajones:
+
+* **Getters:** Sirven para leer el contenido de un cajón (por ejemplo, obtener la marca del auto).
+* **Setters:** Sirven para escribir en un cajón (por ejemplo, cambiar el color del auto).
+
+**Métodos:**  Son como las "herramientas" del molde que permiten realizar acciones:
+
+* **Obtener información:** Te entrega una descripción detallada del auto (marca, modelo, etc.).
+* **Acelerar:** Simula la acción de acelerar el auto, pero con un límite de velocidad máximo.
+* **Calcular impuestos:**  Calcula el valor del impuesto que se debe pagar por el auto (en este caso, el IVA en Colombia).
+* **Mostrar impuestos:**  Muestra el valor del impuesto calculado.
+
+**Método `main()`:**  Es como la "fábrica" donde se usan el molde y las herramientas para construir y probar los autos.
+
+La clase `Auto` es un modelo que define cómo se construyen los autos, sus características y cómo se comportan.  Los constructores, getters, setters y métodos  permite crear y manejar autos de diferentes maneras.
+
+
+## Actividad: Creando la clase "Restaurante"
+
+**Objetivo:** Crear una clase `Restaurante` que represente un restaurante, incluyendo sus características y funcionalidades.
+
+**Paso 1: Definir los Atributos (todos `private`):**
+
+* `nombre`: (String) Nombre del restaurante.
+* `tipoCocina`: (String) Tipo de cocina que ofrece.
+* `direccion`: (String) Dirección del restaurante.
+* `capacidad`: (int) Número máximo de personas que puede atender.
+* `horarioApertura`: (String) Horario de apertura.
+* `horarioCierre`: (String) Horario de cierre.
+* `mesasDisponibles`: (int) Número de mesas disponibles en el restaurante.
+* `menu`: (Lista de Strings) Lista de platos que ofrece el restaurante. 
+
+**Paso 2: Crear los Constructores (ambos `public`):**
+
+* **Constructor por defecto:** Inicializa los atributos con valores básicos (ej: nombre = "Restaurante", tipoCocina = "No definido", etc.).
+* **Constructor completo:** Inicializa todos los atributos con los valores proporcionados como parámetros al crear el objeto.
+
+**Paso 3: Implementar Getters y Setters (todos `public`):**
+
+* Crea métodos `get` y `set` para cada atributo:
+    * `getNombre()`, `setNombre(String nombre)`
+    * `getTipoCocina()`, `setTipoCocina(String tipoCocina)`
+    * `getDireccion()`, `setDireccion(String direccion)`
+    * `getCapacidad()`, `setCapacidad(int capacidad)`
+    * `getHorarioApertura()`, `setHorarioApertura(String horarioApertura)`
+    * `getHorarioCierre()`, `setHorarioCierre(String horarioCierre)`
+    * `getMesasDisponibles()`, `setMesasDisponibles(int mesasDisponibles)`
+    * `getMenu()`, `setMenu(List<String> menu)`
+
+**Paso 4: Implementar Métodos (ambos `public`):**
+
+* **`mostrarMenu()`:** Recorre la lista `menu` y muestra cada plato por separado.
+* **`reservarMesa(int numeroPersonas)`:** Verifica si hay mesas disponibles. Si hay suficientes mesas, decrementa `mesasDisponibles` y muestra un mensaje de confirmación de la reserva. Si no hay mesas disponibles, muestra un mensaje de error.
+
+**Paso 5: Crear Método Privado:**
+
+* **`calcularPrecioPlato(String nombrePlato)`:** Este método privado ( `private`) recibirá el nombre de un plato como parámetro y devolverá su precio.  Podrías implementar esta lógica creando una estructura de datos que asocie cada plato con su precio. 
+
+**Paso 6: Implementar Método `public`:**
+
+* **`calcularFactura(List<String> platosPedido)`:** 
+    * Itera por la lista de platos pedidos. 
+    * Para cada plato, utiliza el método `calcularPrecioPlato(String nombrePlato)` para obtener su precio.
+    * Suma el precio de cada plato para obtener el total de la factura.
+    * Puedes mostrar la factura con el nombre del restaurante, los platos pedidos y el precio total.
+
+**Paso 7: Método `main()`:**
+
+* En el método `main()`, crea un objeto `Restaurante` y prueba los métodos que has creado. Por ejemplo:
+    * Crea un restaurante con nombre, tipo de cocina y un menú.
+    * Muestra el menú del restaurante.
+    * Reserva una mesa para dos personas.
+    * Calcula la factura de un pedido de dos platos.
+
+**Pistas:**
+
+* Recuerda utilizar modificadores de acceso `public` y `private` según corresponda. 
+* Puedes utilizar estructuras de datos como listas o arreglos para almacenar información como el menú y la relación entre platos y precios.
+* Puedes usar variables locales para realizar cálculos dentro de los métodos.
+
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class Restaurante {
+
+    // Atributos (privados)
+    private String nombre;
+    private String tipoCocina;
+    private String direccion;
+    private int capacidad;
+    private String horarioApertura;
+    private String horarioCierre;
+    private int mesasDisponibles;
+    private List<String> menu; 
+
+    // Constructor por defecto (publico)
+    public Restaurante() {
+        this.nombre = "Restaurante";
+        this.tipoCocina = "No definido";
+        this.direccion = "Desconocida";
+        this.capacidad = 50;
+        this.horarioApertura = "12:00 pm";
+        this.horarioCierre = "11:00 pm";
+        this.mesasDisponibles = 10;
+        this.menu = new ArrayList<>();
+    }
+
+    // Constructor completo (publico)
+    public Restaurante(String nombre, String tipoCocina, String direccion, int capacidad, 
+                       String horarioApertura, String horarioCierre, int mesasDisponibles, 
+                       List<String> menu) {
+        this.nombre = nombre;
+        this.tipoCocina = tipoCocina;
+        this.direccion = direccion;
+        this.capacidad = capacidad;
+        this.horarioApertura = horarioApertura;
+        this.horarioCierre = horarioCierre;
+        this.mesasDisponibles = mesasDisponibles;
+        this.menu = menu;
+    }
+
+    // Getters y Setters (todos publicos)
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getTipoCocina() {
+        return tipoCocina;
+    }
+
+    public void setTipoCocina(String tipoCocina) {
+        this.tipoCocina = tipoCocina;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public int getCapacidad() {
+        return capacidad;
+    }
+
+    public void setCapacidad(int capacidad) {
+        this.capacidad = capacidad;
+    }
+
+    public String getHorarioApertura() {
+        return horarioApertura;
+    }
+
+    public void setHorarioApertura(String horarioApertura) {
+        this.horarioApertura = horarioApertura;
+    }
+
+    public String getHorarioCierre() {
+        return horarioCierre;
+    }
+
+    public void setHorarioCierre(String horarioCierre) {
+        this.horarioCierre = horarioCierre;
+    }
+
+    public int getMesasDisponibles() {
+        return mesasDisponibles;
+    }
+
+    public void setMesasDisponibles(int mesasDisponibles) {
+        this.mesasDisponibles = mesasDisponibles;
+    }
+
+    public List<String> getMenu() {
+        return menu;
+    }
+
+    public void setMenu(List<String> menu) {
+        this.menu = menu;
+    }
+
+    // Métodos públicos
+    public void mostrarMenu() {
+        System.out.println("Menú del restaurante " + nombre + ":");
+        if (menu.isEmpty()) {
+            System.out.println("El menú está vacío.");
+        } else {
+            for (String plato : menu) {
+                System.out.println("- " + plato);
+            }
+        }
+    }
+
+    public void reservarMesa(int numeroPersonas) {
+        if (numeroPersonas <= mesasDisponibles) {
+            mesasDisponibles -= numeroPersonas;
+            System.out.println("¡Mesa reservada con éxito! Quedan " + mesasDisponibles + " mesas disponibles.");
+        } else {
+            System.out.println("Lo siento, no hay mesas disponibles para " + numeroPersonas + " personas.");
+        }
+    }
+
+    // Método privado
+    private double calcularPrecioPlato(String nombrePlato) {
+        // Implementar lógica para obtener el precio del plato (ejemplo simple)
+        switch (nombrePlato) {
+            case "Pizza":
+                return 15.0;
+            case "Hamburguesa":
+                return 12.0;
+            case "Ensalada":
+                return 8.0;
+            default:
+                return 0.0;
+        }
+    }
+
+    // Método público
+    public double calcularFactura(List<String> platosPedido) {
+        double totalFactura = 0.0;
+        for (String plato : platosPedido) {
+            totalFactura += calcularPrecioPlato(plato);
+        }
+        System.out.println("Factura del Restaurante " + nombre + ":");
+        for (String plato : platosPedido) {
+            System.out.println("- " + plato + " - $" + calcularPrecioPlato(plato));
+        }
+        System.out.println("Total: $" + totalFactura);
+        return totalFactura;
+    }
+
+    public static void main(String[] args) {
+        // Crear un restaurante
+        List<String> menuInicial = new ArrayList<>();
+        menuInicial.add("Pizza");
+        menuInicial.add("Hamburguesa");
+        menuInicial.add("Ensalada");
+        Restaurante miRestaurante = new Restaurante("La Pizzeria", "Italiana", "Calle 123", 80, "12:00 pm", "11:00 pm", 5, menuInicial);
+
+        // Mostrar el menú
+        miRestaurante.mostrarMenu();
+
+        // Reservar una mesa
+        miRestaurante.reservarMesa(3);
+
+        // Calcular la factura
+        List<String> pedido = new ArrayList<>();
+        pedido.add("Pizza");
+        pedido.add("Hamburguesa");
+        miRestaurante.calcularFactura(pedido);
+    }
+}
+```
+
+
+
