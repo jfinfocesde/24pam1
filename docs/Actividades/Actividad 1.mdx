@@ -2,3 +2,183 @@
 sidebar_position: 1
 draft: true
 ---
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class Restaurante {
+
+    // Atributos (privados)
+    private String nombre;
+    private String tipoCocina;
+    private String direccion;
+    private int capacidad;
+    private String horarioApertura;
+    private String horarioCierre;
+    private int mesasDisponibles;
+    private List<String> menu; 
+
+    // Constructor por defecto (publico)
+    public Restaurante() {
+        this.nombre = "Restaurante";
+        this.tipoCocina = "No definido";
+        this.direccion = "Desconocida";
+        this.capacidad = 50;
+        this.horarioApertura = "12:00 pm";
+        this.horarioCierre = "11:00 pm";
+        this.mesasDisponibles = 10;
+        this.menu = new ArrayList<>();
+    }
+
+    // Constructor completo (publico)
+    public Restaurante(String nombre, String tipoCocina, String direccion, int capacidad, 
+                       String horarioApertura, String horarioCierre, int mesasDisponibles, 
+                       List<String> menu) {
+        this.nombre = nombre;
+        this.tipoCocina = tipoCocina;
+        this.direccion = direccion;
+        this.capacidad = capacidad;
+        this.horarioApertura = horarioApertura;
+        this.horarioCierre = horarioCierre;
+        this.mesasDisponibles = mesasDisponibles;
+        this.menu = menu;
+    }
+
+    // Getters y Setters (todos publicos)
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getTipoCocina() {
+        return tipoCocina;
+    }
+
+    public void setTipoCocina(String tipoCocina) {
+        this.tipoCocina = tipoCocina;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public int getCapacidad() {
+        return capacidad;
+    }
+
+    public void setCapacidad(int capacidad) {
+        this.capacidad = capacidad;
+    }
+
+    public String getHorarioApertura() {
+        return horarioApertura;
+    }
+
+    public void setHorarioApertura(String horarioApertura) {
+        this.horarioApertura = horarioApertura;
+    }
+
+    public String getHorarioCierre() {
+        return horarioCierre;
+    }
+
+    public void setHorarioCierre(String horarioCierre) {
+        this.horarioCierre = horarioCierre;
+    }
+
+    public int getMesasDisponibles() {
+        return mesasDisponibles;
+    }
+
+    public void setMesasDisponibles(int mesasDisponibles) {
+        this.mesasDisponibles = mesasDisponibles;
+    }
+
+    public List<String> getMenu() {
+        return menu;
+    }
+
+    public void setMenu(List<String> menu) {
+        this.menu = menu;
+    }
+
+    // Métodos públicos
+    public void mostrarMenu() {
+        System.out.println("Menú del restaurante " + nombre + ":");
+        if (menu.isEmpty()) {
+            System.out.println("El menú está vacío.");
+        } else {
+            for (String plato : menu) {
+                System.out.println("- " + plato);
+            }
+        }
+    }
+
+    public void reservarMesa(int numeroPersonas) {
+        if (numeroPersonas <= mesasDisponibles) {
+            mesasDisponibles -= numeroPersonas;
+            System.out.println("¡Mesa reservada con éxito! Quedan " + mesasDisponibles + " mesas disponibles.");
+        } else {
+            System.out.println("Lo siento, no hay mesas disponibles para " + numeroPersonas + " personas.");
+        }
+    }
+
+    // Método privado
+    private double calcularPrecioPlato(String nombrePlato) {
+        // Implementar lógica para obtener el precio del plato (ejemplo simple)
+        switch (nombrePlato) {
+            case "Pizza":
+                return 15.0;
+            case "Hamburguesa":
+                return 12.0;
+            case "Ensalada":
+                return 8.0;
+            default:
+                return 0.0;
+        }
+    }
+
+    // Método público
+    public double calcularFactura(List<String> platosPedido) {
+        double totalFactura = 0.0;
+        for (String plato : platosPedido) {
+            totalFactura += calcularPrecioPlato(plato);
+        }
+        System.out.println("Factura del Restaurante " + nombre + ":");
+        for (String plato : platosPedido) {
+            System.out.println("- " + plato + " - $" + calcularPrecioPlato(plato));
+        }
+        System.out.println("Total: $" + totalFactura);
+        return totalFactura;
+    }
+
+    public static void main(String[] args) {
+        // Crear un restaurante
+        List<String> menuInicial = new ArrayList<>();
+        menuInicial.add("Pizza");
+        menuInicial.add("Hamburguesa");
+        menuInicial.add("Ensalada");
+        Restaurante miRestaurante = new Restaurante("La Pizzeria", "Italiana", "Calle 123", 80, "12:00 pm", "11:00 pm", 5, menuInicial);
+
+        // Mostrar el menú
+        miRestaurante.mostrarMenu();
+
+        // Reservar una mesa
+        miRestaurante.reservarMesa(3);
+
+        // Calcular la factura
+        List<String> pedido = new ArrayList<>();
+        pedido.add("Pizza");
+        pedido.add("Hamburguesa");
+        miRestaurante.calcularFactura(pedido);
+    }
+}
+```
