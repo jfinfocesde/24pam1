@@ -1,5 +1,65 @@
 ---
 sidebar_position: 6
-draft: true
+draft: false
 slug: /semana6
 ---
+
+# Semana 6
+
+## Evalaucón Momento 1 
+
+### 1. Evaluación de conocimientos (40%)
+
+Por favor, complete la evaluación de conocimientos haciendo clic en el siguiente enlace y utilice el código asignado por el docente
+
+[https://quizizz.com/join](https://quizizz.com/join)
+
+
+### 2. Evaluación de desempeño (60%)
+
+**Objetivo:** Crear una clase "Cancion" en Java que represente una canción, utilizando los conceptos de POO. La clase debe incluir atributos privados, constructores sobrecargados, métodos setter y getter, métodos privados, una constante estática, y sobrecarga de métodos. La clase debe ser almacenada en un repositorio de GitHub.
+
+**Pasos:**
+
+1. **Crear un repositorio en GitHub:**   
+    * Crea un nuevo repositorio llamado "clase_cancion".
+    * Inicializa el repositorio con un archivo `README.md` que describa el proyecto.
+2. **Crear un proyecto en Java:**    
+3. **Crear una clase llamada "Cancion":**
+    * Define la clase con el nombre `Cancion`.
+4. **Definir atributos privados:**
+    * Dentro de la clase, define los siguientes atributos privados:
+        * `titulo` (String)
+        * `artista` (String)
+        * `duracion` (int)  // En segundos
+        * `genero` (String)
+        * `album` (String)
+5. **Definir constructores sobrecargados:**
+    * Crea dos constructores:
+        * Un constructor por defecto que inicialice los atributos con valores por defecto (por ejemplo, "Desconocido").
+        * Un constructor que reciba el `titulo`, `artista` y `duracion` como parámetros e inicialice los atributos correspondientes. 
+6. **Definir métodos setter y getter:**
+    * Define métodos `setter` y `getter` para todos los atributos (titulo, artista, duracion, genero, album).
+7. **Definir un método privado "calcularDuracionMinutos":**
+    * Crea un método privado llamado `calcularDuracionMinutos` que no reciba parámetros y devuelva un valor `int`. Este método debe calcular la duración de la canción en minutos y devolver el resultado.
+8. **Definir una constante estática "SEGUNDOS_POR_MINUTO":**
+    * Crea una constante estática llamada `SEGUNDOS_POR_MINUTO` con el valor 60.
+9. **Sobrecargar el método "mostrarInformacion":**
+    * Define un método público llamado `mostrarInformacion` que no reciba parámetros. Este método debe imprimir la información de la canción (titulo, artista, duracion, genero, album) en la consola.
+    * Crea otra versión del método `mostrarInformacion` que reciba un `String` como parámetro. Este parámetro debe ser el nombre del usuario que la está escuchando. El método debe imprimir la misma información que antes, pero incluyendo el nombre del usuario al final.
+10. **Subir los cambios al repositorio:**
+    * Agrega los cambios realizados a Git: `git add .`
+    * Crea un commit con un mensaje descriptivo: `git commit -m "Implementación inicial de la clase Cancion"`
+    * Sube los cambios al repositorio remoto: `git push origin main`
+11. **Entregar el enlace:**
+    * Comparte el enlace de tu repositorio de GitHub en el archivo de evidencias de tu carpeta compartida en la semana 6.
+
+**Pistas:**
+
+* Puedes usar la fórmula `duracion / SEGUNDOS_POR_MINUTO` para calcular la duración en minutos en el método `calcularDuracionMinutos`.
+* Recuerda que los métodos privados solo pueden ser accedidos desde dentro de la clase `Cancion`.
+* Los métodos `setter` deben modificar el valor de los atributos privados. Los métodos `getter` deben devolver el valor de los atributos privados.
+
+:::warning
+Nota: No se aceptarán actualizaciones al repositorio después de la fecha y hora de entrega.
+:::
