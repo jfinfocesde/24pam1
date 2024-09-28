@@ -1,5 +1,311 @@
 ---
 sidebar_position: 9
-draft: true
+draft: false
 slug: /semana9
 ---
+
+# Semana 9
+
+## El polimorfismo en Java.
+
+El polimorfismo es uno de los pilares fundamentales de la programación orientada a objetos (POO) y es ampliamente utilizado en Java. La palabra "polimorfismo" proviene del griego y significa "muchas formas". En el contexto de la programación, se refiere a la capacidad de un objeto para tomar diferentes formas o comportarse de diferentes maneras.
+
+En Java, hay dos tipos principales de polimorfismo:
+
+1. Polimorfismo en tiempo de compilación (sobrecarga de métodos)
+2. Polimorfismo en tiempo de ejecución (sobreescritura de métodos)
+
+Vamos a explorar cada uno de estos tipos en detalle:
+
+### 1. Polimorfismo en tiempo de compilación (sobrecarga de métodos):
+
+La sobrecarga de métodos permite definir múltiples métodos con el mismo nombre pero con diferentes parámetros dentro de la misma clase. El compilador determina qué método debe ser invocado basándose en el número, tipo y orden de los argumentos pasados.
+
+Ejemplo:
+
+```java
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+    
+    public double add(double a, double b) {
+        return a + b;
+    }
+    
+    public int add(int a, int b, int c) {
+        return a + b + c;
+    }
+}
+```
+
+En este ejemplo, el método `add` está sobrecargado tres veces. El método que se llamará depende de los argumentos proporcionados.
+
+### 2. Polimorfismo en tiempo de ejecución (sobreescritura de métodos):
+
+Este tipo de polimorfismo ocurre cuando una subclase proporciona una implementación específica de un método que ya está definido en su superclase. Se basa en la herencia y la interfaz.
+
+Ejemplo:
+
+```java
+class Animal {
+    public void makeSound() {
+        System.out.println("El animal hace un sonido");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    public void makeSound() {
+        System.out.println("El perro ladra");
+    }
+}
+
+class Cat extends Animal {
+    @Override
+    public void makeSound() {
+        System.out.println("El gato maulla");
+    }
+}
+```
+
+En este caso, tanto `Dog` como `Cat` heredan de `Animal`, pero cada uno proporciona su propia implementación del método `makeSound()`.
+
+Ahora, veamos cómo funciona el polimorfismo en tiempo de ejecución:
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Animal myAnimal = new Animal();
+        Animal myDog = new Dog();
+        Animal myCat = new Cat();
+        
+        myAnimal.makeSound(); // Imprime: El animal hace un sonido
+        myDog.makeSound();    // Imprime: El perro ladra
+        myCat.makeSound();    // Imprime: El gato maulla
+    }
+}
+```
+
+Aunque todas las variables son de tipo `Animal`, Java llama al método correcto para cada objeto en tiempo de ejecución.
+
+Beneficios del polimorfismo:
+
+1. Reutilización de código: Permite escribir métodos que pueden trabajar con objetos de múltiples tipos.
+2. Flexibilidad: Facilita la extensión de código existente sin modificarlo.
+3. Abstracción: Permite tratar objetos de diferentes clases de manera uniforme.
+
+
+## Interfaces en Java: el mapa del comportamiento 
+
+Las interfaces en Java son como planos arquitectónicos que describen la estructura básica de un objeto, sin entrar en detalles de cómo se construye.  Te dicen **qué** debe hacer un objeto, pero no **cómo** lo hará.  Son como contratos que las clases deben cumplir, asegurando que todos los objetos que las implementan compartan un comportamiento común.
+
+**Ventajas de las interfaces:**
+
+* **Abstracción:**  Las interfaces esconden la implementación interna de las clases, permitiéndote trabajar con diferentes objetos de forma uniforme.  Imagínate tener un control remoto que puede controlar diferentes dispositivos (TV, DVD, aire acondicionado), cada uno con su propia lógica interna, pero todos respondiendo a los mismos botones del control.
+* **Polimorfismo:**  Las interfaces permiten que un mismo código funcione con diferentes objetos que las implementan, como si todos fueran del mismo tipo.  Es como tener una llave maestra que abre diferentes cerraduras, cada una con su mecanismo interno único.
+* **Acoplamiento débil:**  Las interfaces reducen la dependencia entre clases, haciendo que el código sea más fácil de modificar y mantener.  Imagina que tienes un sistema de sonido que utiliza diferentes tipos de altavoces.  Al usar una interfaz para definir cómo se controla el volumen, puedes cambiar los altavoces sin afectar al resto del sistema.
+* **Múltiple herencia:**  En Java, las clases solo pueden heredar de una clase padre, pero pueden implementar múltiples interfaces.  Es como poder combinar diferentes habilidades en un solo personaje, como un mago que también es un guerrero.
+* **Diseño de código:**  Las interfaces ayudan a organizar el código en módulos bien definidos, haciendo que sea más legible y mantenible.
+
+**¿Cómo funcionan las interfaces?**
+
+1. **Definición:**  Creas una interfaz con la palabra clave `interface` y defines los métodos que se deben implementar.  Estos métodos son **abstractos**, es decir, no tienen código dentro, solo la firma del método. 
+
+   ```java
+   public interface Drawable {
+       void draw(); // Método abstracto
+   }
+   ```
+
+2. **Implementación:**  Las clases que implementan la interfaz deben proporcionar código para cada método definido.  Usan la palabra clave `implements` para indicar que cumplen con el contrato de la interfaz.
+
+   ```java
+   class Circle implements Drawable {
+       @Override
+       public void draw() {
+           System.out.println("Dibujando un círculo");
+       }
+   }
+   ```
+
+3. **Uso:**  Puedes utilizar una referencia a la interfaz para trabajar con objetos que la implementan, sin importar su tipo específico.
+
+   ```java
+   public static void main(String[] args) {
+       Drawable circle = new Circle();
+       circle.draw(); // Imprime: Dibujando un círculo
+   }
+   ```
+
+**Atributos en interfaces: ¡solo constantes!**
+
+Las interfaces pueden contener atributos, pero solo constantes.  Estas constantes son **finales y estáticas** por defecto, lo que significa que su valor se define en tiempo de compilación y no puede cambiar durante la ejecución del programa.
+
+```java
+public interface Shape {
+    double PI = 3.14159; // Constante en la interfaz
+    
+    double getArea(); // Método abstracto
+}
+
+class Circle implements Shape {
+    private double radius;
+
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+
+    @Override
+    public double getArea() {
+        return PI * radius * radius; // Se utiliza la constante PI
+    }
+}
+```
+
+**Ejemplos de interfaces en Java:**
+
+* **Colecciones:**  Las interfaces `List`, `Set` y `Map` en Java representan diferentes tipos de colecciones, proporcionando un contrato común para trabajar con ellas.
+* **Eventos:**  Interfaces como `ActionListener` en Swing te permiten manejar eventos de forma genérica.
+* **Conexión a bases de datos:**  Interfaces como `Connection` y `PreparedStatement` en JDBC te permiten interactuar con diferentes bases de datos de forma abstracta.
+
+**Consejos para usar interfaces:**
+
+* Piensa en las interfaces como contratos que definen un comportamiento.
+* Usa interfaces para abstraer implementaciones y promover la reutilización de código.
+* Evita crear interfaces demasiado generales o demasiado específicas. Busca el equilibrio adecuado.
+
+## Actividad:  El Gran Torneo de Deportes
+
+**Objetivo:** Aplicar interfaces y polimorfismo en Java para crear un simulador de un torneo deportivo que permite competir a diferentes tipos de atletas.
+
+**Escenario:**
+
+Eres el programador del "Gran Torneo Deportivo", un evento que reúne a atletas de diversas disciplinas.  Tu tarea es crear un sistema que permita a los atletas competir en sus respectivas categorías y calcular sus puntajes.
+
+**Pasos:**
+
+1. **Interfaz `Atleta`:**
+
+    * Define la interfaz `Atleta` con los siguientes métodos:
+        * `realizarCompetencia()`:  Este método simula la competencia del atleta y devuelve su puntaje.
+        * `mostrarInformacion()`: Muestra información sobre el atleta (nombre, deporte, etc.).
+    * Ejemplo:
+
+      ```java
+      public interface Atleta {
+          int realizarCompetencia();
+          void mostrarInformacion();
+      }
+      ```
+
+2. **Clases `Corredor`, `Nadador` y `Saltador`:**
+
+    * Crea clases `Corredor`, `Nadador` y `Saltador` que implementen la interfaz `Atleta`. 
+    * Implementa los métodos `realizarCompetencia()` y `mostrarInformacion()` en cada clase, considerando las características específicas de cada deporte.
+    * Ejemplo para la clase `Corredor`:
+
+      ```java
+      public class Corredor implements Atleta {
+          private String nombre;
+
+          public Corredor(String nombre) {
+              this.nombre = nombre;
+          }
+
+          @Override
+          public int realizarCompetencia() {
+              // Simula la carrera y devuelve un puntaje aleatorio
+              return (int) (Math.random() * 100); 
+          }
+
+          @Override
+          public void mostrarInformacion() {
+              System.out.println("Atleta: " + nombre + ", Deporte: Carrera");
+          }
+      }
+      ```
+
+3. **Clase `Torneo`:**
+
+    * Crea la clase `Torneo` con un método `organizarCompetencia(Atleta atleta)`.
+    * Este método debe recibir una referencia a un objeto `Atleta`, realizar la competencia, mostrar la información del atleta y mostrar el puntaje obtenido.
+    * Ejemplo:
+
+      ```java
+      public class Torneo {
+          public void organizarCompetencia(Atleta atleta) {
+              atleta.mostrarInformacion();
+              int puntaje = atleta.realizarCompetencia();
+              System.out.println("Puntaje: " + puntaje);
+              System.out.println("---------------------");
+          }
+      }
+      ```
+
+4. **Prueba en el `main`:**
+
+    * Crea un objeto `Torneo` y crea instancias de `Corredor`, `Nadador` y `Saltador`.
+    * Llama al método `organizarCompetencia()` del objeto `Torneo` para cada atleta.
+    * Observa cómo se realiza la competencia y se muestran los puntajes para cada tipo de atleta, utilizando el polimorfismo.
+
+**Código completo:**
+
+```java
+public interface Atleta {
+    int realizarCompetencia();
+    void mostrarInformacion();
+}
+
+public class Corredor implements Atleta {
+    private String nombre;
+
+    public Corredor(String nombre) {
+        this.nombre = nombre;
+    }
+
+    @Override
+    public int realizarCompetencia() {
+        return (int) (Math.random() * 100); 
+    }
+
+    @Override
+    public void mostrarInformacion() {
+        System.out.println("Atleta: " + nombre + ", Deporte: Carrera");
+    }
+}
+
+// ...  (Clases Nadador y Saltador similares)
+
+public class Torneo {
+    public void organizarCompetencia(Atleta atleta) {
+        atleta.mostrarInformacion();
+        int puntaje = atleta.realizarCompetencia();
+        System.out.println("Puntaje: " + puntaje);
+        System.out.println("---------------------");
+    }
+
+    public static void main(String[] args) {
+        Torneo torneo = new Torneo();
+
+        Corredor corredor = new Corredor("Juan");
+        Nadador nadador = new Nadador("Ana");
+        Saltador saltador = new Saltador("Pedro");
+
+        torneo.organizarCompetencia(corredor);
+        torneo.organizarCompetencia(nadador);
+        torneo.organizarCompetencia(saltador);
+    }
+}
+```
+
+**Explicación paso a paso:**
+
+* **Polimorfismo:** La clase `Torneo` utiliza la interfaz `Atleta` para recibir cualquier tipo de atleta y llamar a los métodos `realizarCompetencia()` y `mostrarInformacion()`.  El código que se ejecuta en tiempo de ejecución decide qué versión de cada método se usa, dependiendo del tipo de atleta.
+* **Interfaces:** La interfaz `Atleta` define el contrato que deben cumplir todas las clases de atletas, asegurando que cada una tenga los métodos necesarios para participar en el torneo.
+
+**Puntos a destacar:**
+
+* En esta actividad, se utiliza el polimorfismo para que el método `organizarCompetencia()` funcione con cualquier tipo de atleta sin necesidad de código específico para cada uno.
+* La interfaz `Atleta` define un comportamiento común para todos los tipos de atletas, asegurando la coherencia en el sistema.
+
