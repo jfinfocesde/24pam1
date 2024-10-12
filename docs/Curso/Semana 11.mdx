@@ -1,5 +1,675 @@
 ---
 sidebar_position: 11
-draft: true
+draft: false
 slug: /semana11
 ---
+
+# Semana 11
+
+## JPA (Java Persistence API) en Java.
+
+JPA, o Java Persistence API, es una especificación de Java que describe una interfaz común para frameworks de persistencia de datos. Su principal objetivo es simplificar el desarrollo de aplicaciones Java que necesitan interactuar con bases de datos relacionales.
+
+### 1. Mapeo Objeto-Relacional (ORM): 
+   JPA permite mapear objetos Java a tablas de bases de datos relacionales. Esto se hace principalmente mediante anotaciones en las clases Java.
+
+### 2. Entidades:
+   En JPA, una entidad es una clase Java ligera que representa datos que pueden ser persistidos en una base de datos. Se marca con la anotación @Entity.
+
+### 3. EntityManager:
+   Es la interfaz principal de JPA para realizar operaciones de persistencia como crear, leer, actualizar y eliminar (CRUD) entidades.
+
+### 4. Lenguaje de consulta:
+   JPA proporciona el Java Persistence Query Language (JPQL), similar a SQL pero orientado a objetos.
+
+### 5. Relaciones:
+   JPA soporta relaciones entre entidades como uno-a-uno, uno-a-muchos y muchos-a-muchos.
+
+### 6. Implementaciones:
+   Aunque JPA es solo una especificación, hay varias implementaciones como Hibernate, EclipseLink y OpenJPA.
+
+Ejemplo básico de cómo se podría definir una entidad en JPA:
+
+```java
+import javax.persistence.*;
+
+@Entity
+@Table(name = "empleados")
+public class Empleado {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Column(name = "nombre")
+    private String nombre;
+
+    @Column(name = "apellido")
+    private String apellido;
+
+    @Column(name = "email")
+    private String email;
+
+    // Getters y setters
+}
+```
+
+Este ejemplo define una entidad `Empleado` que se mapea a una tabla llamada "empleados" en la base de datos.
+
+## Hibernate
+
+Hibernate es un framework de persistencia de objetos para la plataforma Java. Básicamente, te permite guardar y recuperar objetos Java en una base de datos relacional sin necesidad de escribir SQL manualmente. 
+
+### ¿Qué es la persistencia?
+
+La persistencia se refiere a la capacidad de guardar datos de una aplicación (en este caso, objetos Java) en un almacenamiento permanente, como una base de datos.
+
+### ¿Cómo funciona Hibernate?
+
+Hibernate te permite mapear tus clases Java a tablas de la base de datos. Esto significa que cada objeto Java se convierte en una fila en la base de datos, y los atributos del objeto se convierten en las columnas de la tabla. 
+
+Hibernate utiliza una tecnología llamada ORM (Object-Relational Mapping), que te permite trabajar con tus objetos Java como si estuvieran directamente en la memoria, sin necesidad de preocuparte por los detalles de la base de datos.
+
+### ¿Cuáles son las ventajas de usar Hibernate?
+
+* Simplicidad: Te permite trabajar con objetos Java sin necesidad de escribir SQL manualmente.
+* Productividad: Reduce la cantidad de código que necesitas escribir para la persistencia.
+* Portabilidad: Hibernate puede funcionar con diferentes tipos de bases de datos sin necesidad de cambios importantes en el código.
+* Mantenimiento: El código se vuelve más fácil de entender y mantener al trabajar con objetos Java en lugar de SQL directo.
+* Flexibilidad: Hibernate ofrece opciones para personalizar el mapeo entre objetos y la base de datos.
+
+### ¿Cuándo usar Hibernate?
+
+Si necesitas una solución robusta y eficiente para la persistencia de objetos Java, Hibernate es una excelente opción. 
+
+:::info
+La diferencia entre especificaciones e implementaciones es un concepto importante en Java, especialmente en el contexto de las APIs de Java Enterprise. 
+
+1. Especificación:
+
+Una especificación en Java es un documento formal que describe un conjunto de interfaces, clases y comportamientos esperados. No contiene código ejecutable, sino que define cómo debe funcionar una API o tecnología.
+
+Características clave:
+- Define un estándar
+- Describe qué debe hacer una tecnología, no cómo hacerlo
+- Generalmente desarrollada a través del Java Community Process (JCP)
+- No es código ejecutable
+
+2. Implementación:
+
+Una implementación es el código real que cumple con una especificación. Es el software que puedes usar en tus aplicaciones.
+
+Características clave:
+- Código ejecutable que sigue las reglas de la especificación
+- Puede haber múltiples implementaciones de una misma especificación
+- Pueden añadir características adicionales más allá de la especificación
+
+Ejemplo concreto con JPA:
+
+1. Especificación JPA:
+   - Define las interfaces, anotaciones y comportamientos esperados para la persistencia en Java
+   - Actualmente en la versión 3.1 (parte de Jakarta EE 10)
+   - No contiene código que puedas usar directamente en tu aplicación
+
+2. Implementaciones de JPA:
+   - Hibernate: Una de las implementaciones más populares de JPA
+   - EclipseLink: La implementación de referencia para JPA
+   - OpenJPA: Implementación de Apache
+:::
+
+## Proyecto JPA Hibernete
+
+Entendido. Voy a explicar detalladamente cada parte del ejemplo y crear archivos separados para cada componente. También explicaré cómo funciona la arquitectura general.
+
+Estructura del proyecto:
+
+```
+src
+├── main
+│   ├── java
+│   │   └── com
+│   │       └── example
+│   │           ├── entity
+│   │           │   └── Usuario.java
+│   │           ├── repository
+│   │           │   └── UsuarioRepository.java
+│   │           ├── service
+│   │           │   └── UsuarioService.java
+│   │           └── Main.java
+│   └── resources
+│       └── META-INF
+│           └── persistence.xml
+└── pom.xml
+```
+
+1. Archivo pom.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>mysql-jpa-hibernate-example</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <hibernate.version>6.2.7.Final</hibernate.version>
+        <mysql.version>8.0.33</mysql.version>
+    </properties>
+
+    <dependencies>
+        <!-- Hibernate -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+
+        <!-- MySQL Connector -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+    </dependencies>
+</project>
+
+```
+
+Explicación del pom.xml:
+- Este archivo define la configuración del proyecto Maven.
+- Especifica las versiones de Java (17), Hibernate (6.2.7.Final) y MySQL Connector (8.0.33).
+- Incluye las dependencias necesarias para Hibernate y MySQL.
+
+2. Archivo persistence.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+    <persistence-unit name="examplePU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <class>com.example.entity.Usuario</class>
+
+        <!-- MySQL -->
+        <properties>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/ejemplo_db?useSSL=false&amp;serverTimezone=UTC"/>
+            <property name="javax.persistence.jdbc.user" value="tu_usuario"/>
+            <property name="javax.persistence.jdbc.password" value="tu_contraseña"/>
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+        </properties>
+
+        <!-- PostgreSQL -->
+         <!-- <properties>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/ejemplo_db"/>
+            <property name="javax.persistence.jdbc.user" value="tu_usuario"/>
+            <property name="javax.persistence.jdbc.password" value="tu_contraseña"/>
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+        </properties> -->
+
+    </persistence-unit>
+</persistence>
+
+```
+
+Explicación del persistence.xml:
+- Este archivo configura la unidad de persistencia para JPA.
+- Define la conexión a la base de datos MySQL.
+- Especifica la clase de entidad (Usuario) que se va a gestionar.
+- Configura propiedades de Hibernate como mostrar SQL y actualizar automáticamente el esquema.
+
+3. Clase Usuario (Entidad)
+
+```java
+package com.example.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "usuarios")
+public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String nombre;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    // Constructores, getters y setters
+
+    public Usuario() {}
+
+    public Usuario(String nombre, String email) {
+        this.nombre = nombre;
+        this.email = email;
+    }
+
+    // Getters y setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+}
+
+```
+
+Explicación de la clase Usuario:
+- Es una entidad JPA que representa la tabla "usuarios" en la base de datos.
+- Tiene tres campos: id (clave primaria), nombre y email.
+- Utiliza anotaciones JPA para mapear la clase y sus campos a la base de datos.
+
+4. Clase UsuarioRepository
+
+```java
+package com.example.repository;
+
+import com.example.entity.Usuario;
+import jakarta.persistence.EntityManager;
+
+import java.util.List;
+
+public class UsuarioRepository {
+    private EntityManager entityManager;
+
+    public UsuarioRepository(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    public void save(Usuario usuario) {
+        entityManager.getTransaction().begin();
+        entityManager.persist(usuario);
+        entityManager.getTransaction().commit();
+    }
+
+    public Usuario findById(Long id) {
+        return entityManager.find(Usuario.class, id);
+    }
+
+    public List<Usuario> findAll() {
+        return entityManager.createQuery("FROM Usuario", Usuario.class).getResultList();
+    }
+
+    public void update(Usuario usuario) {
+        entityManager.getTransaction().begin();
+        entityManager.merge(usuario);
+        entityManager.getTransaction().commit();
+    }
+
+    public void delete(Usuario usuario) {
+        entityManager.getTransaction().begin();
+        entityManager.remove(usuario);
+        entityManager.getTransaction().commit();
+    }
+}
+
+```
+
+Explicación de UsuarioRepository:
+- Esta clase maneja las operaciones CRUD (Crear, Leer, Actualizar, Eliminar) para la entidad Usuario.
+- Utiliza un EntityManager para interactuar con la base de datos.
+- Proporciona métodos para guardar, buscar, actualizar y eliminar usuarios.
+
+5. Clase UsuarioService
+
+```java
+package com.example.service;
+
+import com.example.entity.Usuario;
+import com.example.repository.UsuarioRepository;
+
+import java.util.List;
+
+public class UsuarioService {
+    private UsuarioRepository repository;
+
+    public UsuarioService(UsuarioRepository repository) {
+        this.repository = repository;
+    }
+
+    public void crearUsuario(String nombre, String email) {
+        Usuario usuario = new Usuario(nombre, email);
+        repository.save(usuario);
+    }
+
+    public Usuario obtenerUsuario(Long id) {
+        return repository.findById(id);
+    }
+
+    public List<Usuario> obtenerTodosLosUsuarios() {
+        return repository.findAll();
+    }
+
+    public void actualizarUsuario(Usuario usuario) {
+        repository.update(usuario);
+    }
+
+    public void eliminarUsuario(Usuario usuario) {
+        repository.delete(usuario);
+    }
+}
+
+```
+
+Explicación de UsuarioService:
+- Esta clase actúa como una capa de servicio entre el repositorio y la lógica de negocio.
+- Proporciona métodos de alto nivel para operar con usuarios.
+- Utiliza el UsuarioRepository para realizar las operaciones reales en la base de datos.
+
+6. Clase Main
+
+```java
+package com.example;
+
+import com.example.entity.Usuario;
+import com.example.repository.UsuarioRepository;
+import com.example.service.UsuarioService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("examplePU");
+        EntityManager em = emf.createEntityManager();
+
+        UsuarioRepository repository = new UsuarioRepository(em);
+        UsuarioService service = new UsuarioService(repository);
+
+        // Crear usuarios
+        service.crearUsuario("Juan Pérez", "juan@example.com");
+        service.crearUsuario("María García", "maria@example.com");
+
+        // Obtener todos los usuarios
+        List<Usuario> usuarios = service.obtenerTodosLosUsuarios();
+        System.out.println("Usuarios:");
+        for (Usuario usuario : usuarios) {
+            System.out.println(usuario);
+        }
+
+        // Obtener un usuario específico
+        Usuario usuario = service.obtenerUsuario(1L);
+        if (usuario != null) {
+            System.out.println("Usuario encontrado: " + usuario);
+
+            // Actualizar usuario
+            usuario.setNombre("Juan Antonio Pérez");
+            service.actualizarUsuario(usuario);
+            System.out.println("Usuario actualizado: " + service.obtenerUsuario(1L));
+
+            // Eliminar usuario
+            service.eliminarUsuario(usuario);
+            System.out.println("Usuario eliminado. Buscando de nuevo...");
+            Usuario usuarioEliminado = service.obtenerUsuario(1L);
+            System.out.println(usuarioEliminado != null ? "Usuario aún existe" : "Usuario no encontrado");
+        }
+
+        em.close();
+        emf.close();
+    }
+}
+
+```
+
+Explicación de la clase Main:
+- Esta es la clase principal que demuestra el uso de la aplicación.
+- Crea una EntityManagerFactory y un EntityManager para manejar la persistencia.
+- Inicializa el repositorio y el servicio.
+- Realiza operaciones CRUD utilizando el servicio de usuarios.
+
+Arquitectura del proyecto:
+
+1. Capa de Entidad (Entity Layer):
+   - La clase Usuario representa la estructura de datos y se mapea directamente a una tabla en la base de datos.
+
+2. Capa de Repositorio (Repository Layer):
+   - UsuarioRepository maneja la interacción directa con la base de datos utilizando JPA/Hibernate.
+   - Proporciona métodos CRUD básicos para la entidad Usuario.
+
+3. Capa de Servicio (Service Layer):
+   - UsuarioService actúa como intermediario entre la lógica de negocio y el repositorio.
+   - Proporciona una interfaz de alto nivel para operar con usuarios.
+
+4. Capa de Aplicación (Application Layer):
+   - La clase Main demuestra el uso de las capas inferiores y sirve como punto de entrada de la aplicación.
+
+5. Configuración:
+   - El archivo pom.xml gestiona las dependencias del proyecto.
+   - persistence.xml configura la unidad de persistencia JPA.
+
+Flujo de la aplicación:
+1. La aplicación se inicia en la clase Main.
+2. Se crea un EntityManagerFactory y un EntityManager para manejar la persistencia.
+3. Se inicializan el repositorio y el servicio.
+4. Las operaciones CRUD se realizan a través del servicio.
+5. El servicio utiliza el repositorio para interactuar con la base de datos.
+6. El repositorio utiliza JPA/Hibernate para ejecutar las operaciones en la base de datos MySQL.
+
+Esta arquitectura proporciona una separación clara de responsabilidades, lo que facilita el mantenimiento y la escalabilidad del código. Además, el uso de JPA e Hibernate abstrae la mayor parte de la complejidad de la interacción con la base de datos, permitiendo centrarse en la lógica de negocio.
+
+
+## Anotaciones JPA (Java Persistence API).
+
+
+### 1. Anotaciones de Entidad
+
+```java
+import javax.persistence.*;
+
+@Entity
+@Table(name = "empleados")
+public class Empleado {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "nombre", nullable = false, length = 100)
+    private String nombre;
+
+    @Transient
+    private int edad;
+
+    // getters y setters
+}
+
+```
+
+Explicación:
+- `@Entity`: Marca una clase como una entidad JPA.
+- `@Table`: Especifica el nombre de la tabla en la base de datos.
+- `@Id`: Marca un campo como la clave primaria de la entidad.
+- `@GeneratedValue`: Especifica cómo se genera el valor de la clave primaria.
+- `@Column`: Permite personalizar la columna en la base de datos.
+- `@Transient`: Indica que un campo no debe ser persistido en la base de datos.
+
+### 2. Anotaciones de Relación
+
+```java
+@Entity
+public class Departamento {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+
+    @OneToMany(mappedBy = "departamento", cascade = CascadeType.ALL)
+    private List<Empleado> empleados;
+}
+
+@Entity
+public class Empleado {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+
+    @ManyToOne
+    @JoinColumn(name = "departamento_id")
+    private Departamento departamento;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "direccion_id", referencedColumnName = "id")
+    private Direccion direccion;
+
+    @ManyToMany
+    @JoinTable(
+        name = "empleado_proyecto", 
+        joinColumns = @JoinColumn(name = "empleado_id"),
+        inverseJoinColumns = @JoinColumn(name = "proyecto_id")
+    )
+    private List<Proyecto> proyectos;
+}
+
+```
+
+Explicación:
+- `@OneToMany`: Define una relación uno a muchos.
+- `@ManyToOne`: Define una relación muchos a uno.
+- `@OneToOne`: Define una relación uno a uno.
+- `@ManyToMany`: Define una relación muchos a muchos.
+- `@JoinColumn`: Especifica la columna de unión para la relación.
+- `@JoinTable`: Especifica la tabla de unión para relaciones muchos a muchos.
+
+### 3. Anotaciones de Herencia
+
+```java
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_empleado")
+public abstract class Empleado {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nombre;
+}
+
+@Entity
+@DiscriminatorValue("TM")
+public class EmpleadoTiempoCompleto extends Empleado {
+    private double salarioAnual;
+}
+
+@Entity
+@DiscriminatorValue("TP")
+public class EmpleadoTiempoParcial extends Empleado {
+    private double tarifaPorHora;
+}
+
+```
+
+Explicación:
+- `@Inheritance`: Especifica la estrategia de herencia para la entidad.
+- `@DiscriminatorColumn`: Define la columna discriminadora para la estrategia de tabla única.
+- `@DiscriminatorValue`: Especifica el valor discriminador para cada subclase.
+
+### 4. Anotaciones de Consulta
+
+```java
+@Entity
+@NamedQueries({
+    @NamedQuery(name = "Empleado.findAll", query = "SELECT e FROM Empleado e"),
+    @NamedQuery(name = "Empleado.findByDepartamento", 
+                query = "SELECT e FROM Empleado e WHERE e.departamento.id = :depId")
+})
+@NamedNativeQuery(name = "Empleado.countByDepartamento", 
+                  query = "SELECT COUNT(*) FROM empleados WHERE departamento_id = ?",
+                  resultClass = Long.class)
+public class Empleado {
+    // ...
+
+    @Version
+    private int version;
+}
+
+```
+
+Explicación:
+- `@NamedQuery`: Define una consulta JPQL nombrada.
+- `@NamedQueries`: Agrupa múltiples consultas nombradas.
+- `@NamedNativeQuery`: Define una consulta SQL nativa nombrada.
+- `@Version`: Se usa para el control de concurrencia optimista.
+
+
+### 5. Anotaciones de Callback y Validación
+
+```java
+@Entity
+public class Empleado {
+    // ...
+
+    @NotNull
+    @Size(min = 2, max = 100)
+    private String nombre;
+
+    @Email
+    private String email;
+
+    @Min(18)
+    private int edad;
+
+    @PrePersist
+    public void antesDeGuardar() {
+        // Lógica a ejecutar antes de persistir la entidad
+    }
+
+    @PostLoad
+    public void despuesDeCarga() {
+        // Lógica a ejecutar después de cargar la entidad
+    }
+}
+
+```
+
+Explicación:
+- `@NotNull`, `@Size`, `@Email`, `@Min`: Anotaciones de validación de Bean Validation.
+- `@PrePersist`: Método a ejecutar antes de persistir la entidad.
+- `@PostLoad`: Método a ejecutar después de cargar la entidad de la base de datos.
+
