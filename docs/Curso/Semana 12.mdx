@@ -3,3 +3,107 @@ sidebar_position: 12
 draft: true
 slug: /semana12
 ---
+
+
+# Semana 12
+
+## Evaluación Momento 1 
+
+### 1. Evaluación de conocimientos (40%)
+
+Por favor, complete la evaluación de conocimientos haciendo clic en el siguiente enlace y utilice el código asignado por el docente
+
+[https://quizizz.com/join](https://quizizz.com/join)
+
+
+### 2. Actividad de Evaluación: Sistema de Gestión de Biblioteca (60%)
+
+
+Esta actividad amplía el Sistema de Gestión de Biblioteca anterior para incorporar todos los temas de la documentación proporcionada, incluyendo herencia, modificadores de acceso, la palabra clave `super`, clases abstractas, métodos abstractos y polimorfismo. La actividad debe realizarse en un repositorio público en GitHub.
+
+
+#### Repositorio GitHub
+
+1. Crea un nuevo repositorio público en GitHub llamado "biblioteca-materiales-avanzada".
+
+#### Instrucciones
+
+**Paso 1: Superclase Abstracta `Material`**
+
+* Crea una clase abstracta llamada `Material` (en el archivo `Material.java`).
+* Define los siguientes atributos:
+    * `titulo` (String): Título del material.
+    * `autor` (String): Autor del material.
+    * `añoPublicacion` (int): Año de publicación del material.
+    * `disponible` (boolean): Indica si el material está disponible para préstamo.
+* Define los siguientes métodos:
+    * Un constructor que inicialice los atributos `titulo`, `autor` y `añoPublicacion`.
+    * `mostrarInformacion()`: Muestra la información general del material (título, autor, año de publicación, disponibilidad).
+    * `prestar()`: Cambia el estado de `disponible` a `false`.
+    * `devolver()`: Cambia el estado de `disponible` a `true`.
+    * `getTipoMaterial()`: Método abstracto que devuelve el tipo de material (ej. "Libro", "Revista", "Audiovisual").
+    * `calcularTarifaPrestamo(int diasPrestamo)`: Método abstracto que calcula la tarifa de préstamo del material según la cantidad de días.
+
+**Paso 2: Subclase `Libro`**
+
+* Crea una clase llamada `Libro` (en el archivo `Libro.java`) que herede de `Material`.
+* Añade los siguientes atributos:
+    * `isbn` (String): Número ISBN del libro.
+    * `numeroPaginas` (int): Número de páginas del libro.
+* Implementa el método `getTipoMaterial()` para devolver "Libro".
+* Implementa el método `calcularTarifaPrestamo(int diasPrestamo)` considerando una tarifa base por día y un recargo adicional si el libro tiene más de 500 páginas.
+* Añade un método `mostrarDetallesLibro()` que muestre la información específica del libro, incluyendo el ISBN y el número de páginas.
+
+**Paso 3: Subclase `Revista`**
+
+* Crea una clase llamada `Revista` (en el archivo `Revista.java`) que herede de `Material`.
+* Añade los siguientes atributos:
+    * `numeroEdicion` (int): Número de la edición de la revista.
+    * `mesPublicacion` (String): Mes de publicación de la revista.
+* Implementa el método `getTipoMaterial()` para devolver "Revista".
+* Implementa el método `calcularTarifaPrestamo(int diasPrestamo)` considerando una tarifa base por día.
+* Añade un método `mostrarDetallesRevista()` que muestre la información específica de la revista, incluyendo el número de edición y el mes de publicación.
+
+**Paso 4: Subclase `Audiovisual`**
+
+* Crea una clase llamada `Audiovisual` (en el archivo `Audiovisual.java`) que herede de `Material`.
+* Añade los siguientes atributos:
+    * `formato` (String): Formato del material audiovisual (ej. "DVD", "Blu-ray", "Digital").
+    * `duracion` (int): Duración del material audiovisual en minutos.
+* Implementa el método `getTipoMaterial()` para devolver "Audiovisual".
+* Implementa el método `calcularTarifaPrestamo(int diasPrestamo)` considerando una tarifa base por día y un recargo adicional si el formato es "Blu-ray".
+* Añade un método `mostrarDetallesAudiovisual()` que muestre la información específica del material audiovisual, incluyendo el formato y la duración.
+
+**Paso 5: Clase `Biblioteca`**
+
+* Crea una clase llamada `Biblioteca` (en el archivo `Biblioteca.java`).
+* Añade un atributo `materiales` que sea una lista de objetos `Material`.
+* Implementa los siguientes métodos:
+    * `agregarMaterial(Material material)`: Agrega un nuevo material a la lista `materiales`.
+    * `buscarMaterial(String titulo)`: Busca un material por título y lo devuelve. 
+    * `mostrarCatalogo()`: Muestra la información de todos los materiales en la biblioteca usando polimorfismo.
+
+**Paso 6: Prueba en la clase `Main`**
+
+* Crea una clase `Main` (en el archivo `Main.java`) para probar las clases.
+* Crea un objeto `Biblioteca`.
+* Crea varios objetos de tipo `Libro`, `Revista` y `Audiovisual` con diferentes datos.
+* Agrega los materiales a la biblioteca usando el método `agregarMaterial()`.
+* Llama al método `mostrarCatalogo()` para mostrar la información de todos los materiales, incluyendo los detalles específicos de cada tipo de material.
+* Prueba la búsqueda de un material por título. 
+* Simula el préstamo y la devolución de algunos materiales.
+
+#### Pistas
+
+*  **Modificadores de Acceso:** Utiliza los modificadores de acceso `public`, `protected` y `private` para controlar la visibilidad de los atributos y métodos. Recuerda que los miembros `private` no se heredan.
+*  **Herencia:**  Utiliza la palabra clave `extends` para indicar que una clase hereda de otra.
+*  **Palabra Clave `super`:** Utiliza `super()` para llamar al constructor de la superclase desde la subclase. También puedes usar `super` para acceder a métodos de la superclase.
+*  **Clases y Métodos Abstractos:** Utiliza la palabra clave `abstract` para declarar clases abstractas y métodos abstractos. 
+*  **Polimorfismo:**  Utiliza una referencia a la superclase `Material` para manipular objetos de las subclases `Libro`, `Revista` y `Audiovisual`. 
+*  **Implementa la lógica de los métodos:** Asegúrate de que la lógica de los métodos `prestar()`, `devolver()` y `calcularTarifaPrestamo()` sea coherente con el comportamiento esperado para cada tipo de material.
+
+## Entrega
+
+1. Sube tu código al repositorio de GitHub "biblioteca-materiales-avanzada".
+2. Comparte el enlace de tu repositorio de GitHub en la plataforma de entrega de la actividad semana 12.
+
