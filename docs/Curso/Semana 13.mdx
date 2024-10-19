@@ -1,5 +1,822 @@
 ---
 sidebar_position: 13
-draft: true
+draft: false
 slug: /semana13
 ---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+## Resumen del contenido del "Manual de usuario de Hibernate ORM"
+
+[Hibernate ORM User Guide](https://docs.jboss.org/hibernate/orm/6.6/userguide/html_single/Hibernate_User_Guide.html#preface)
+
+El Manual de usuario de Hibernate ORM proporciona una guía completa sobre cómo utilizar Hibernate, un framework de mapeo objeto-relacional (ORM) para Java. El manual cubre una amplia gama de temas, desde los conceptos básicos hasta las características avanzadas.
+
+### Modelado de dominio
+
+El **modelado de dominio** es el corazón de un ORM. Hibernate funciona mejor si las clases del modelo de dominio siguen el modelo de programación POJO (Plain Old Java Object) / JavaBean.
+
+:::info
+Un Plain Old Java Object (POJO) es un concepto simple pero importante en Java. Aquí tienes una explicación concisa:
+Un POJO es una clase Java simple que sigue ciertas convenciones:
+
+Es una clase Java estándar, no una interfaz ni una clase abstracta.
+No extiende ninguna otra clase ni implementa ninguna interfaz específica.
+No depende de ningún framework o biblioteca externa.
+Generalmente tiene:
+
+Propiedades privadas
+Métodos getter y setter públicos para acceder a estas propiedades
+Un constructor sin argumentos (aunque puede tener constructores adicionales)
+
+
+No tiene anotaciones específicas de ningún framework.
+
+Los POJOs se utilizan comúnmente para representar datos o entidades del dominio de una aplicación. Son flexibles y pueden ser utilizados en diversos contextos sin atarse a una tecnología específica.
+:::
+
+Hay tres categorías principales de tipos de valores:
+
+* **Tipos básicos:** Un tipo básico es un mapeo entre un tipo Java y una sola columna de base de datos. Hibernate puede mapear muchos tipos Java estándar como tipos básicos, incluyendo  `Integer`, `String`, `enum`  y cualquier tipo que implemente `java.io.Serializable`. Se pueden usar anotaciones como `@Basic` y `@Column` para personalizar el mapeo.
+
+* **Tipos incrustables:** Un tipo incrustable es una composición de valores, similar a un componente. Por ejemplo, una clase `Publisher` podría ser una composición de `nombre` y `país`. Se usan las anotaciones `@Embeddable` y `@Embedded` para definir y usar tipos incrustables. 
+
+* **Tipos de colección:** Los tipos de colección representan colecciones de valores, incluyendo listas, conjuntos y mapas. Se pueden personalizar los tipos de colección usando anotaciones como `@ElementCollection`, `@CollectionType` y `@CollectionId`.
+
+**Ejemplo de tipo básico:**
+```java
+@Entity(name = "Product")
+public class Product {
+    @Id
+    private Integer id;
+
+    private String sku;
+
+    @Column(name = "NOTES")
+    private String description;
+}
+```
+
+**Ejemplo de tipo incrustable:**
+```java
+@Entity(name = "Book")
+public static class Book {
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    private String title;
+    
+    private Publisher publisher;
+}
+
+@Embeddable
+public static class Publisher {
+    @Column(name = "publisher_name")
+    private String name;
+
+    @Column(name = "publisher_country")
+    private String country;
+}
+```
+
+### Arranque
+
+Hay dos formas principales de arrancar Hibernate:
+
+<details>
+  <summary>Arranque nativo:</summary>
+
+  En este enfoque, la aplicación construye manualmente los objetos `ServiceRegistry`, `Metadata` y `SessionFactory` necesarios para interactuar con Hibernate.
+
+    ### Ejemplo
+
+    <Tabs>
+        <TabItem value="Tree" label="Proyecto" default>
+        ```bash        
+        src
+        └─ main
+        ├─ java
+        │  └─ com
+        │     └─ example
+        │        ├─ HibernateUtil.java
+        │        ├─ Main.java
+        │        └─ Persona.java
+        └─ resources
+            └─ hibernate.cfg.xml      
+        ```
+        </TabItem>
+        <TabItem value="HibernateUtil.java" label="HibernateUtil.java" >
+        ```java
+        package com.example;
+
+        import org.hibernate.SessionFactory;
+        import org.hibernate.boot.Metadata;
+        import org.hibernate.boot.MetadataSources;
+        import org.hibernate.boot.registry.StandardServiceRegistry;
+        import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+
+        public class HibernateUtil {
+            private static final SessionFactory sessionFactory = buildSessionFactory();
+
+            private static SessionFactory buildSessionFactory() {
+                try {
+                    // Crear un StandardServiceRegistry
+                    StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                            .configure("hibernate.cfg.xml") // Cargar la configuración desde hibernate.cfg.xml
+                            .build();
+
+                    // Crear un MetadataSources
+                    MetadataSources metadataSources = new MetadataSources(serviceRegistry);
+
+                    // Crear un Metadata
+                    Metadata metadata = metadataSources.buildMetadata();
+
+                    // Crear un SessionFactory
+                    return metadata.buildSessionFactory();
+                } catch (Throwable ex) {
+                    System.err.println("Error al crear el SessionFactory: " + ex);
+                    throw new ExceptionInInitializerError(ex);
+                }
+            }
+
+            public static SessionFactory getSessionFactory() {
+                return sessionFactory;
+            }
+        }
+        ```
+        Para usar esta clase `HibernateUtil` en tu proyecto, necesitarás seguir estos pasos:
+
+        1. Configuración del proyecto:
+        Asegúrate de que tienes Hibernate y sus dependencias en tu proyecto. Si estás usando Maven, añade las dependencias necesarias en tu `pom.xml`.
+
+        2. Archivo de configuración:
+        Crea un archivo `hibernate.cfg.xml` en el directorio `src/main/resources` de tu proyecto. Este archivo debe contener la configuración de tu base de datos y otras propiedades de Hibernate.        
+
+
+        Explicación del código:
+
+        1. Obtenemos una `SessionFactory` usando `HibernateUtil.getSessionFactory()`.
+        2. Abrimos una nueva `Session` usando `sessionFactory.openSession()`.
+        3. Iniciamos una transacción con `session.beginTransaction()`.
+        4. Realizamos operaciones de base de datos (en este caso, guardar una `Persona`).
+        5. Hacemos commit de la transacción o rollback si ocurre algún error.
+        6. La sesión se cierra automáticamente al salir del bloque `try-with-resources`.
+        7. Al final de la aplicación, cerramos la `SessionFactory`.
+        
+
+        </TabItem>
+        <TabItem value="Persona.java" label="Persona.java">
+        ```java
+        package com.example;
+
+        import jakarta.persistence.*;
+
+        @Entity
+        @Table(name = "personas")
+        public class Persona {
+
+            @Id
+            @GeneratedValue(strategy = GenerationType.IDENTITY)
+            private Long id;
+
+            @Column(nullable = false, length = 50)
+            private String nombre;
+
+            @Column(nullable = false, length = 50)
+            private String apellido;
+
+            @Column(unique = true)
+            private String email;
+
+            // Constructor por defecto
+            public Persona() {}
+
+            // Constructor con parámetros
+            public Persona(String nombre, String apellido, String email) {
+                this.nombre = nombre;
+                this.apellido = apellido;
+                this.email = email;
+            }
+
+            // Getters y setters
+            public Long getId() {
+                return id;
+            }
+
+            public void setId(Long id) {
+                this.id = id;
+            }
+
+            public String getNombre() {
+                return nombre;
+            }
+
+            public void setNombre(String nombre) {
+                this.nombre = nombre;
+            }
+
+            public String getApellido() {
+                return apellido;
+            }
+
+            public void setApellido(String apellido) {
+                this.apellido = apellido;
+            }
+
+            public String getEmail() {
+                return email;
+            }
+
+            public void setEmail(String email) {
+                this.email = email;
+            }
+
+            @Override
+            public String toString() {
+                return "Persona{" +
+                    "id=" + id +
+                    ", nombre='" + nombre + '\'' +
+                    ", apellido='" + apellido + '\'' +
+                    ", email='" + email + '\'' +
+                    '}';
+            }
+        }
+        ```
+       
+        Explicación de esta entidad básica:
+
+        1. `@Entity`: Marca la clase como una entidad JPA.
+        2. `@Table(name = "personas")`: Especifica el nombre de la tabla en la base de datos.
+        3. `@Id`: Indica que el campo `id` es la clave primaria.
+        4. `@GeneratedValue`: Configura la generación automática del ID (auto-incremento en MySQL).
+        5. `@Column`: Personaliza las propiedades de las columnas:
+        - `nullable = false` para campos obligatorios.
+        - `length = 50` limita la longitud de las cadenas.
+        - `unique = true` para el email, asegurando que sea único en la tabla.
+
+        Esta entidad incluye:
+        - Campos básicos: id, nombre, apellido y email.
+        - Un constructor por defecto (requerido por JPA).
+        - Un constructor con parámetros para facilitar la creación de objetos.
+        - Getters y setters para todos los campos.
+        - Un método `toString()` para facilitar la depuración.
+
+        Para usar esta entidad en tu proyecto:
+
+        1. Guarda este archivo como `Persona.java` en el paquete apropiado de tu proyecto (por ejemplo, `com.tuempresa.modelo`).
+        2. Asegúrate de que la declaración del paquete en la parte superior del archivo sea correcta.
+        3. En tu archivo `hibernate.cfg.xml`, incluye esta entidad en el mapeo:
+        ```xml
+        <mapping class="com.tuempresa.modelo.Persona"/>
+        ```
+        4. Si estás usando configuración basada en anotaciones, asegúrate de que esta clase esté en un paquete escaneado por Hibernate.
+
+        Esta entidad creará una tabla `personas` en tu base de datos MySQL con columnas para id, nombre, apellido y email.
+        
+        </TabItem>
+        <TabItem value="Main.java" label="Main.java">
+        ```java
+        package com.example;
+
+        import org.hibernate.Session;
+        import org.hibernate.SessionFactory;
+        import org.hibernate.Transaction;
+
+        public class Main {
+
+            
+            public static void main(String[] args) {
+                SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+
+                // Abrir una nueva sesión
+                try (Session session = sessionFactory.openSession()) {
+                    // Comenzar una transacción
+                    Transaction tx = session.beginTransaction();
+
+                    try {
+                        // Aquí va tu lógica de negocio
+                        // Por ejemplo, guardar un objeto Persona
+                        Persona persona = new Persona("Juan", "Valencia", "juan@example.com");
+                    
+                        session.persist(persona);
+
+                        // Commit de la transacción
+                        tx.commit();
+                    } catch (Exception e) {
+                        // Si algo sale mal, hacer rollback
+                        if (tx != null) tx.rollback();
+                        e.printStackTrace();
+                    }
+                }
+
+                // Cerrar la SessionFactory al finalizar la aplicación
+                HibernateUtil.getSessionFactory().close();
+            }
+        }
+        ```
+
+        Explicación y conceptos clave:
+
+        1. `EntityManagerFactory` y `EntityManager`: Reemplazan a `SessionFactory` y `Session` en JPA.
+
+        2. `Persistence.createEntityManagerFactory()`: Crea un `EntityManagerFactory` usando la configuración definida en tu archivo `persistence.xml`.
+
+        3. `em.persist(persona)`: Usado para guardar una nueva entidad. Reemplaza a `session.save()`.
+
+        4. `em.find(Persona.class, id)`: Busca una entidad por su ID.
+
+        5. Actualización de entidades: Cuando modificas un objeto que está en estado "managed" (como el obtenido con `em.find()`), los cambios se sincronizarán automáticamente con la base de datos al hacer commit.
+
+        6. `em.remove(persona)`: Elimina una entidad de la base de datos.
+
+        7. Manejo de transacciones: Usamos `EntityTransaction` para controlar las transacciones.
+
+        Para usar este código:
+
+        1. Asegúrate de tener configurado correctamente tu archivo `persistence.xml` con los detalles de conexión a la base de datos y las entidades mapeadas.
+
+        2. Reemplaza "nombreDeTuUnidadDePersistencia" con el nombre real de tu unidad de persistencia definida en `persistence.xml`.
+
+        3. Ajusta los IDs y datos de ejemplo según tus necesidades.
+
+        Este enfoque utiliza la API estándar de JPA, que es la forma recomendada de trabajar con Hibernate en aplicaciones modernas. Proporciona una capa de abstracción sobre Hibernate y permite cambiar más fácilmente entre diferentes implementaciones de JPA si es necesario en el futuro.  
+
+        </TabItem>
+        <TabItem value="hibernate.cfg.xml" label="hibernate.cfg.xml">
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE hibernate-configuration PUBLIC
+                "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+                "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+        <hibernate-configuration>
+            <session-factory>
+                <!-- Configuración de la conexión JDBC para MySQL -->
+                <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+                <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/nombre_de_tu_base_de_datos?useSSL=false&amp;serverTimezone=UTC</property>
+                <property name="hibernate.connection.username">usuario</property>
+                <property name="hibernate.connection.password">password</property>
+
+                <!-- Echo de SQL en stdout -->
+                <property name="hibernate.show_sql">true</property>
+                <property name="hibernate.format_sql">true</property>
+
+                <!-- Actualización automática del esquema de base de datos -->
+                <property name="hibernate.hbm2ddl.auto">update</property>
+                
+                <!-- Mapeo de clases de entidad -->
+                <mapping class="com.example.Persona"/>
+                <!-- Añade más mapeos de clase aquí según sea necesario -->
+
+            </session-factory>
+        </hibernate-configuration>
+        ```      
+
+        Explicación de los elementos clave:
+
+        1. Conexión JDBC:
+        - `hibernate.connection.driver_class`: El driver JDBC para MySQL.
+        - `hibernate.connection.url`: La URL de conexión a tu base de datos MySQL.
+        - `hibernate.connection.username` y `hibernate.connection.password`: Tus credenciales de MySQL.
+
+        2. Configuración de logging:
+        - `hibernate.show_sql` y `hibernate.format_sql`: Para mostrar y formatear las consultas SQL generadas.
+
+        3. Actualización de esquema:
+        - `hibernate.hbm2ddl.auto`: Configurado en "update" para actualizar automáticamente el esquema. Ten cuidado con este ajuste en producción.
+
+        4. Mapeo de entidades:
+        - `<mapping class="...">`: Especifica las clases de entidad que Hibernate debe manejar.
+
+        Para usar esta configuración:
+
+        1. Guarda este archivo como `hibernate.cfg.xml` en el directorio `src/main/resources` de tu proyecto.
+        2. Asegúrate de reemplazar `nombre_de_tu_base_de_datos`, `tu_usuario`, y `tu_contraseña` con tus datos reales.
+        3. Ajusta la URL de conexión si tu servidor MySQL no está en localhost o usa un puerto diferente.
+        4. Actualiza los mapeos de clase para incluir todas tus entidades.
+
+        Recuerda añadir las dependencias necesarias en tu `pom.xml` si estás usando Maven:
+
+        - Hibernate Core
+        - MySQL Connector/J
+
+        </TabItem>
+        <TabItem value="pom.xml" label="pom.xml">
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <project xmlns="http://maven.apache.org/POM/4.0.0"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+            <modelVersion>4.0.0</modelVersion>
+
+            <groupId>com.example</groupId>
+            <artifactId>jpa1</artifactId>
+            <version>1.0-SNAPSHOT</version>
+
+            <properties>
+                <maven.compiler.source>17</maven.compiler.source>
+                <maven.compiler.target>17</maven.compiler.target>
+            </properties>
+
+            <dependencies>
+
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <version>8.0.33</version>
+                </dependency>    
+
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-core</artifactId>
+                    <version>6.6.1.Final</version>          
+                </dependency>
+
+            </dependencies>
+        </project>
+        ```
+        </TabItem>
+    </Tabs>
+ 
+</details>
+
+<details>
+  <summary>Arranque de Jakarta Persistence:</summary>
+
+    Este enfoque aprovecha las API de Jakarta Persistence y generalmente se usa en entornos de contenedores.
+
+    ## Ejemplo
+
+        <Tabs>
+        <TabItem value="Tree" label="Proyecto" default>
+        ```bash        
+        src
+        └─ main
+          ├─ java
+          │  └─ com
+          │     └─ example
+          │        ├─ Main.java
+          │        └─ Persona.java
+          └─ resources
+             └─ META-INF
+                └─ persistence.xml      
+        ```
+        </TabItem>        
+        <TabItem value="Persona.java" label="Persona.java">
+        ```java
+        package com.example;
+
+        import jakarta.persistence.*;
+
+        @Entity
+        @Table(name = "personas")
+        public class Persona {
+
+            @Id
+            @GeneratedValue(strategy = GenerationType.IDENTITY)
+            private Long id;
+
+            @Column(nullable = false, length = 50)
+            private String nombre;
+
+            @Column(nullable = false, length = 50)
+            private String apellido;
+
+            @Column(unique = true)
+            private String email;
+
+            // Constructor por defecto
+            public Persona() {}
+
+            // Constructor con parámetros
+            public Persona(String nombre, String apellido, String email) {
+                this.nombre = nombre;
+                this.apellido = apellido;
+                this.email = email;
+            }
+
+            // Getters y setters
+            public Long getId() {
+                return id;
+            }
+
+            public void setId(Long id) {
+                this.id = id;
+            }
+
+            public String getNombre() {
+                return nombre;
+            }
+
+            public void setNombre(String nombre) {
+                this.nombre = nombre;
+            }
+
+            public String getApellido() {
+                return apellido;
+            }
+
+            public void setApellido(String apellido) {
+                this.apellido = apellido;
+            }
+
+            public String getEmail() {
+                return email;
+            }
+
+            public void setEmail(String email) {
+                this.email = email;
+            }
+
+            @Override
+            public String toString() {
+                return "Persona{" +
+                    "id=" + id +
+                    ", nombre='" + nombre + '\'' +
+                    ", apellido='" + apellido + '\'' +
+                    ", email='" + email + '\'' +
+                    '}';
+            }
+        }
+        ```
+       
+        Explicación de esta entidad básica:
+
+        1. `@Entity`: Marca la clase como una entidad JPA.
+        2. `@Table(name = "personas")`: Especifica el nombre de la tabla en la base de datos.
+        3. `@Id`: Indica que el campo `id` es la clave primaria.
+        4. `@GeneratedValue`: Configura la generación automática del ID (auto-incremento en MySQL).
+        5. `@Column`: Personaliza las propiedades de las columnas:
+        - `nullable = false` para campos obligatorios.
+        - `length = 50` limita la longitud de las cadenas.
+        - `unique = true` para el email, asegurando que sea único en la tabla.
+
+        Esta entidad incluye:
+        - Campos básicos: id, nombre, apellido y email.
+        - Un constructor por defecto (requerido por JPA).
+        - Un constructor con parámetros para facilitar la creación de objetos.
+        - Getters y setters para todos los campos.
+        - Un método `toString()` para facilitar la depuración.
+
+        Para usar esta entidad en tu proyecto:
+
+        1. Guarda este archivo como `Persona.java` en el paquete apropiado de tu proyecto (por ejemplo, `com.tuempresa.modelo`).
+        2. Asegúrate de que la declaración del paquete en la parte superior del archivo sea correcta.
+        3. En tu archivo `hibernate.cfg.xml`, incluye esta entidad en el mapeo:
+        ```xml
+        <mapping class="com.tuempresa.modelo.Persona"/>
+        ```
+        4. Si estás usando configuración basada en anotaciones, asegúrate de que esta clase esté en un paquete escaneado por Hibernate.
+
+        Esta entidad creará una tabla `personas` en tu base de datos MySQL con columnas para id, nombre, apellido y email.
+        
+        </TabItem>
+        <TabItem value="Main.java" label="Main.java">
+        ```java
+        package com.example;
+
+        import jakarta.persistence.EntityManager;
+        import jakarta.persistence.EntityManagerFactory;
+        import jakarta.persistence.Persistence;
+
+        public class Main {
+            public static void main(String[] args) {
+                EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPersistenceUnit");
+                EntityManager em = emf.createEntityManager();
+
+                // Crear un nueva persona
+                Persona persona = new Persona("Juan","Zapata","juan@gmail.com");
+                
+                em.getTransaction().begin();
+                em.persist(persona);
+                em.getTransaction().commit();
+
+                // Buscar persona
+                Persona foundUser = em.find(Persona.class, persona.getId());
+                System.out.println("Usuario encontrado: " + foundUser.getNombre());
+
+                em.close();
+                emf.close();
+            }
+        }
+        ```
+
+        Explicación y conceptos clave:
+
+        Este código Java es un ejemplo simple que demuestra cómo usar Jakarta Persistence (JPA) con Hibernate para interactuar con una base de datos MySQL. Analicemos el código paso a paso:
+
+        **1. `package com.example;`**
+
+        * Esto define el paquete al que pertenece la clase `Main`. Los paquetes ayudan a organizar tu código en una estructura jerárquica.
+
+        **2. Importaciones:**
+
+        * `import javax.persistence.EntityManager;`: Importa la interfaz `EntityManager`, que es el principal punto de entrada para realizar operaciones con entidades JPA.
+        * `import javax.persistence.EntityManagerFactory;`: Importa la interfaz `EntityManagerFactory`, que crea instancias de `EntityManager`.
+        * `import javax.persistence.Persistence;`: Importa la clase `Persistence`, que se utiliza para obtener una instancia de `EntityManagerFactory`.
+
+        **3. Clase `Main`:**
+
+        * `public class Main {` define una clase llamada `Main`, que contiene el punto de entrada de la aplicación.
+
+        **4. Método `main`:**
+
+        * `public static void main(String[] args) {` es el punto de entrada de la aplicación. Se ejecuta cuando se ejecuta la aplicación.
+        * `EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPersistenceUnit");`: Crea una instancia de `EntityManagerFactory` llamada `emf` utilizando el nombre de la unidad de persistencia "myPersistenceUnit" definida en el archivo `persistence.xml`.
+        * `EntityManager em = emf.createEntityManager();`: Crea una instancia de `EntityManager` llamada `em` a partir de la `EntityManagerFactory`.
+        * `User user = new User();`: Crea una nueva instancia de la entidad `User`.
+        * `user.setName("John Doe");`: Asigna el nombre "John Doe" a la nueva instancia de `User`.
+        * `em.getTransaction().begin();`: Inicia una transacción para garantizar la integridad de las operaciones de la base de datos.
+        * `em.persist(user);`: Persiste la instancia de `User` en la base de datos.
+        * `em.getTransaction().commit();`: Confirma la transacción para guardar los cambios en la base de datos.
+        * `User foundUser = em.find(User.class, user.getId());`: Busca la entidad `User` recién creada utilizando su ID.
+        * `System.out.println("Usuario encontrado: " + foundUser.getName());`: Imprime el nombre del usuario encontrado en la consola.
+        * `em.close();`: Cierra la instancia de `EntityManager` para liberar los recursos.
+        * `emf.close();`: Cierra la instancia de `EntityManagerFactory` para liberar los recursos.
+        
+        Este es un ejemplo básico de cómo usar Jakarta Persistence con Hibernate para interactuar con una base de datos. Puedes expandir este ejemplo con más entidades, relaciones, consultas y operaciones de la base de datos.
+        
+        </TabItem>
+        <TabItem value="persistence.xml" label="persistence.xml">
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+                    http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+                    version="2.2">
+            <persistence-unit name="examplePU" transaction-type="RESOURCE_LOCAL">
+                <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+                <class>com.example.entity.Usuario</class>
+
+                <!-- MySQL -->
+                <properties>
+                    <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/nombre_de_tu_base_de_datos?useSSL=false&amp;serverTimezone=UTC"/>
+                    <property name="javax.persistence.jdbc.user" value="usuario"/>
+                    <property name="javax.persistence.jdbc.password" value="password"/>
+                    <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+                    <property name="hibernate.show_sql" value="true"/>
+                    <property name="hibernate.format_sql" value="true"/>
+                    <property name="hibernate.hbm2ddl.auto" value="update"/>
+                </properties>
+
+                <!-- PostgreSQL -->
+                <!-- <properties>
+                    <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/ejemplo_db"/>
+                    <property name="javax.persistence.jdbc.user" value="tu_usuario"/>
+                    <property name="javax.persistence.jdbc.password" value="tu_contraseña"/>
+                    <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+                    <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+                    <property name="hibernate.show_sql" value="true"/>
+                    <property name="hibernate.format_sql" value="true"/>
+                    <property name="hibernate.hbm2ddl.auto" value="update"/>
+                </properties> -->
+
+            </persistence-unit>
+        </persistence>
+        ```      
+
+        Explicación:
+
+        Este código XML es un archivo de configuración de Jakarta Persistence (JPA) llamado `persistence.xml`. Este archivo se utiliza para configurar cómo JPA interactúa con tu base de datos, especificando detalles como la unidad de persistencia, el proveedor de persistencia, las propiedades de la base de datos y las entidades que se gestionarán.
+       
+        **1. Declaración del archivo XML:**
+
+        * `<?xml version="1.0" encoding="UTF-8"?>`: Indica que el archivo es XML, la versión y la codificación.
+
+        **2. Espacio de nombres:**
+
+        * `xmlns="http://xmlns.jcp.org/xml/ns/persistence"`: Define el espacio de nombres para el esquema XML de JPA.
+        * `xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"`: Define el espacio de nombres para la validación XML.
+        * `xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"`: Especifica la ubicación del esquema XML para la validación.
+        * `version="2.2"`: Indica la versión del esquema XML de JPA.
+
+        **3. Unidad de persistencia:**
+
+        * `<persistence-unit name="myPersistenceUnit" transaction-type="RESOURCE_LOCAL">`: Define una unidad de persistencia con el nombre "myPersistenceUnit" y un tipo de transacción `RESOURCE_LOCAL`, lo que significa que se manejará localmente por la aplicación.
+            * `name="myPersistenceUnit"`:  El nombre de la unidad de persistencia.
+            * `transaction-type="RESOURCE_LOCAL"`: Indica que la unidad de persistencia gestionará las transacciones de forma local.
+
+        **4. Proveedor de persistencia:**
+
+        * `<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>`:  Especifica el proveedor de persistencia que se utilizará, en este caso, Hibernate.
+
+        **5. Entidades:**
+
+        * `<class>com.example.entity.Usuario</class>`: Define las clases de entidades que se gestionarán por la unidad de persistencia. En este caso, se gestionará la clase `Usuario` del paquete `com.example.entity`.
+
+        **6. Propiedades de la base de datos:**
+
+        * `<properties>`: Define las propiedades de conexión a la base de datos. En este caso, se está usando MySQL.
+            * `javax.persistence.jdbc.url`: La URL de conexión a la base de datos.
+            * `javax.persistence.jdbc.user`: El nombre de usuario para la base de datos.
+            * `javax.persistence.jdbc.password`: La contraseña para la base de datos.
+            * `javax.persistence.jdbc.driver`: El driver JDBC para la base de datos.
+            * `hibernate.show_sql`:  Habilita la impresión de las consultas SQL generadas por Hibernate en la consola.
+            * `hibernate.format_sql`:  Formato las consultas SQL impresas en la consola.
+            * `hibernate.hbm2ddl.auto`: Define el comportamiento de Hibernate para la creación y actualización de la base de datos.  "update" indica que Hibernate actualizará la base de datos si hay cambios en las entidades.
+
+        **Importante:**
+
+        * El código también incluye una sección comentada para PostgreSQL, que puedes usar si estás trabajando con esta base de datos.
+        * Este archivo debe estar ubicado en el directorio `META-INF` de tu proyecto Java.
+
+        En resumen, este archivo `persistence.xml` configura una unidad de persistencia llamada "myPersistenceUnit" que utiliza Hibernate como proveedor de persistencia. Especifica la conexión a MySQL y las entidades que se gestionarán. También activa la impresión de las consultas SQL generadas por Hibernate en la consola.
+
+        </TabItem>
+        <TabItem value="pom.xml" label="pom.xml">
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <project xmlns="http://maven.apache.org/POM/4.0.0"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+            <modelVersion>4.0.0</modelVersion>
+
+            <groupId>com.example</groupId>
+            <artifactId>jpa1</artifactId>
+            <version>1.0-SNAPSHOT</version>
+
+            <properties>
+                <maven.compiler.source>17</maven.compiler.source>
+                <maven.compiler.target>17</maven.compiler.target>
+            </properties>
+
+            <dependencies>
+
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <version>8.0.33</version>
+                </dependency>    
+
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-core</artifactId>
+                    <version>6.6.1.Final</version>          
+                </dependency>
+
+            </dependencies>
+        </project>
+        ```
+        </TabItem>
+    </Tabs>
+ 
+</details>
+
+### Generación de esquema
+
+Hibernate puede generar automáticamente el esquema de la base de datos a partir del modelo de dominio anotado. Esto se puede configurar usando la propiedad `hibernate.hbm2ddl.auto`.
+
+### Contexto de persistencia
+
+El **contexto de persistencia** es el área donde Hibernate administra las entidades. Se puede acceder al contexto de persistencia a través del objeto `Session` o `EntityManager`.
+
+### Fetching
+
+**Fetching** se refiere al proceso de recuperar datos relacionados de la base de datos. Hibernate ofrece varias estrategias de fetching, incluyendo fetching perezoso, fetching ansioso y fetching por lotes.
+
+### Caching
+
+Hibernate admite el **caching** de segundo nivel para mejorar el rendimiento. Se pueden configurar diferentes proveedores de caché, como Ehcache e Infinispan.
+
+### Consultas
+
+Hibernate proporciona el **lenguaje de consulta de Hibernate (HQL)**, un lenguaje de consulta orientado a objetos, y también admite consultas JPQL (Jakarta Persistence Query Language).
+
+### Consultas nativas
+
+Las **consultas nativas** permiten ejecutar consultas SQL directamente contra la base de datos. Se pueden usar anotaciones como `@NamedNativeQuery` y `@SqlResultSetMapping` para mapear los resultados de las consultas nativas a objetos Java.
+
+### Bloqueo
+
+Hibernate admite **bloqueo optimista** y **bloqueo pesimista** para manejar la concurrencia.
+
+### Transacciones
+
+Hibernate admite la administración de **transacciones** a través de la API de transacciones de Hibernate o a través de JTA (Jakarta Transactions API).
+
+### Envers
+
+**Envers** es un módulo de Hibernate que proporciona capacidades de auditoría. Permite rastrear los cambios realizados en las entidades a lo largo del tiempo.
+
+### Configuración
+
+Hibernate ofrece una amplia gama de **propiedades de configuración** para personalizar su comportamiento. Estas propiedades se pueden configurar a través de un archivo `hibernate.cfg.xml` o mediante programación.
+
+### Tipos básicos heredados
+
+Hibernate proporciona una forma de registrar y usar **tipos básicos heredados** a través de `BasicTypeRegistry` y la anotación `@Type`.
+
+### Consultas nativas heredadas
+
+Hibernate admite **consultas nativas heredadas** a través de la API `SQLQuery`.
+
+### Ejemplos de código
+
+El manual de usuario de Hibernate ORM incluye numerosos ejemplos de código para ilustrar los conceptos y características discutidos. Estos ejemplos cubren una amplia gama de escenarios de uso y proporcionan una referencia valiosa para los desarrolladores.
+
+### Conclusión
+
+El Manual de usuario de Hibernate ORM es un recurso esencial para cualquier desarrollador que trabaje con Hibernate. El manual proporciona una cobertura completa de los conceptos y características de Hibernate, y los numerosos ejemplos de código lo convierten en una referencia práctica para el desarrollo de aplicaciones.
+
