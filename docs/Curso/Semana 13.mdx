@@ -10,46 +10,46 @@ import TabItem from '@theme/TabItem';
 
 Tanto Gradle como Maven son herramientas de gestión de dependencias ampliamente utilizadas para construir proyectos de software.  Si bien ambas herramientas comparten el objetivo de simplificar el proceso de construcción,  cada una tiene sus propias fortalezas y debilidades.
 
-### **Maven**
+### Maven
 
-* **Ventajas:**
-    * **Madurez:** Maven es más antiguo y tiene una gran comunidad, lo que se traduce en una amplia gama de plugins y una documentación extensa.
-    * **Simplicidad:**  Maven es más sencillo de aprender y configurar, especialmente para principiantes. 
-    * **Estructura estándar:** La estructura de un proyecto Maven es estandarizada, lo que facilita la colaboración y el entendimiento entre equipos. 
-* **Desventajas:**
-    * **Rigidez:** La estructura rígida de Maven puede ser una limitante en proyectos complejos o con necesidades específicas.
-    * **Rendimiento:** Maven puede ser lento en proyectos de gran tamaño con muchas dependencias.
-    * **Flexibilidad:** Las opciones de personalización y configurabilidad son limitadas en comparación con Gradle.
+* Ventajas:
+    * Madurez: Maven es más antiguo y tiene una gran comunidad, lo que se traduce en una amplia gama de plugins y una documentación extensa.
+    * Simplicidad:  Maven es más sencillo de aprender y configurar, especialmente para principiantes. 
+    * Estructura estándar: La estructura de un proyecto Maven es estandarizada, lo que facilita la colaboración y el entendimiento entre equipos. 
+* Desventajas:
+    * Rigidez: La estructura rígida de Maven puede ser una limitante en proyectos complejos o con necesidades específicas.
+    * Rendimiento: Maven puede ser lento en proyectos de gran tamaño con muchas dependencias.
+    * Flexibilidad: Las opciones de personalización y configurabilidad son limitadas en comparación con Gradle.
 
-### **Gradle**
+### Gradle
 
-* **Ventajas:**
-    * **Flexibilidad:** Gradle ofrece una gran flexibilidad en la configuración y la definición de las tareas de construcción.
-    * **Rendimiento:** Gradle es más rápido y eficiente que Maven, especialmente en proyectos grandes con muchas dependencias.
-    * **Scripting:** Gradle utiliza Groovy, un lenguaje de scripting flexible y potente, para definir las tareas de construcción. 
-* **Desventajas:**
-    * **Complejidad:** Gradle es más complejo de aprender y configurar que Maven.
-    * **Comunidad:** La comunidad de Gradle es más pequeña que la de Maven, lo que puede dificultar encontrar soluciones a problemas específicos.
-    * **Documentación:**  La documentación de Gradle es más extensa, pero menos completa que la de Maven.
+* Ventajas:
+    * Flexibilidad: Gradle ofrece una gran flexibilidad en la configuración y la definición de las tareas de construcción.
+    * Rendimiento: Gradle es más rápido y eficiente que Maven, especialmente en proyectos grandes con muchas dependencias.
+    * Scripting: Gradle utiliza Groovy, un lenguaje de scripting flexible y potente, para definir las tareas de construcción. 
+* Desventajas:
+    * Complejidad: Gradle es más complejo de aprender y configurar que Maven.
+    * Comunidad: La comunidad de Gradle es más pequeña que la de Maven, lo que puede dificultar encontrar soluciones a problemas específicos.
+    * Documentación:  La documentación de Gradle es más extensa, pero menos completa que la de Maven.
 
-**Comparación:**
+Comparación:
 
 | Característica | Maven | Gradle |
 |---|---|---|
-| **Madurez:** | Más maduro | Menos maduro |
-| **Simplicidad:** | Más simple | Más complejo |
-| **Flexibilidad:** | Menos flexible | Más flexible |
-| **Rendimiento:** | Más lento | Más rápido |
-| **Estructura del proyecto:** | Estándar y rígida | Más flexible |
-| **Lenguaje de scripting:** | XML | Groovy |
-| **Comunidad:** | Más grande | Más pequeña |
+| Madurez: | Más maduro | Menos maduro |
+| Simplicidad: | Más simple | Más complejo |
+| Flexibilidad: | Menos flexible | Más flexible |
+| Rendimiento: | Más lento | Más rápido |
+| Estructura del proyecto: | Estándar y rígida | Más flexible |
+| Lenguaje de scripting: | XML | Groovy |
+| Comunidad: | Más grande | Más pequeña |
 
-**Conclusión:**
+Conclusión:
 
-* **Maven** es una buena opción para proyectos pequeños o medianos con requisitos de construcción simples.
-* **Gradle** es una mejor opción para proyectos grandes y complejos que requieren mayor flexibilidad y rendimiento.
+* Maven es una buena opción para proyectos pequeños o medianos con requisitos de construcción simples.
+* Gradle es una mejor opción para proyectos grandes y complejos que requieren mayor flexibilidad y rendimiento.
 
-### **Gradle**
+### Gradle
 
 ### Artículo
 
@@ -70,7 +70,7 @@ El Manual de usuario de Hibernate ORM proporciona una guía completa sobre cómo
 
 ### Modelado de dominio
 
-El **modelado de dominio** es el corazón de un ORM. Hibernate funciona mejor si las clases del modelo de dominio siguen el modelo de programación POJO (Plain Old Java Object) / JavaBean.
+El modelado de dominio es el corazón de un ORM. Hibernate funciona mejor si las clases del modelo de dominio siguen el modelo de programación POJO (Plain Old Java Object) / JavaBean.
 
 :::info
 Un Plain Old Java Object (POJO) es un concepto simple pero importante en Java. Aquí tienes una explicación concisa:
@@ -93,13 +93,13 @@ Los POJOs se utilizan comúnmente para representar datos o entidades del dominio
 
 Hay tres categorías principales de tipos de valores:
 
-* **Tipos básicos:** Un tipo básico es un mapeo entre un tipo Java y una sola columna de base de datos. Hibernate puede mapear muchos tipos Java estándar como tipos básicos, incluyendo  `Integer`, `String`, `enum`  y cualquier tipo que implemente `java.io.Serializable`. Se pueden usar anotaciones como `@Basic` y `@Column` para personalizar el mapeo.
+* Tipos básicos: Un tipo básico es un mapeo entre un tipo Java y una sola columna de base de datos. Hibernate puede mapear muchos tipos Java estándar como tipos básicos, incluyendo  `Integer`, `String`, `enum`  y cualquier tipo que implemente `java.io.Serializable`. Se pueden usar anotaciones como `@Basic` y `@Column` para personalizar el mapeo.
 
-* **Tipos incrustables:** Un tipo incrustable es una composición de valores, similar a un componente. Por ejemplo, una clase `Publisher` podría ser una composición de `nombre` y `país`. Se usan las anotaciones `@Embeddable` y `@Embedded` para definir y usar tipos incrustables. 
+* Tipos incrustables: Un tipo incrustable es una composición de valores, similar a un componente. Por ejemplo, una clase `Publisher` podría ser una composición de `nombre` y `país`. Se usan las anotaciones `@Embeddable` y `@Embedded` para definir y usar tipos incrustables. 
 
-* **Tipos de colección:** Los tipos de colección representan colecciones de valores, incluyendo listas, conjuntos y mapas. Se pueden personalizar los tipos de colección usando anotaciones como `@ElementCollection`, `@CollectionType` y `@CollectionId`.
+* Tipos de colección: Los tipos de colección representan colecciones de valores, incluyendo listas, conjuntos y mapas. Se pueden personalizar los tipos de colección usando anotaciones como `@ElementCollection`, `@CollectionType` y `@CollectionId`.
 
-**Ejemplo de tipo básico:**
+Ejemplo de tipo básico:
 ```java
 @Entity(name = "Product")
 public class Product {
@@ -113,7 +113,7 @@ public class Product {
 }
 ```
 
-**Ejemplo de tipo incrustable:**
+Ejemplo de tipo incrustable:
 ```java
 @Entity(name = "Book")
 public static class Book {
@@ -145,7 +145,7 @@ Hay dos formas principales de arrancar Hibernate:
 
   En este enfoque, la aplicación construye manualmente los objetos `ServiceRegistry`, `Metadata` y `SessionFactory` necesarios para interactuar con Hibernate.
 
-    ### Ejemplo
+    #### Ejemplo
 
     <Tabs>
         <TabItem value="Tree" label="Proyecto" default>
@@ -501,7 +501,7 @@ Hay dos formas principales de arrancar Hibernate:
 
     Este enfoque aprovecha las API de Jakarta Persistence y generalmente se usa en entornos de contenedores.
 
-    ## Ejemplo
+    #### Ejemplo
 
         <Tabs>
         <TabItem value="Tree" label="Proyecto" default>
@@ -661,21 +661,21 @@ Hay dos formas principales de arrancar Hibernate:
 
         Este código Java es un ejemplo simple que demuestra cómo usar Jakarta Persistence (JPA) con Hibernate para interactuar con una base de datos MySQL. Analicemos el código paso a paso:
 
-        **1. `package com.example;`**
+        1. `package com.example;`
 
         * Esto define el paquete al que pertenece la clase `Main`. Los paquetes ayudan a organizar tu código en una estructura jerárquica.
 
-        **2. Importaciones:**
+        2. Importaciones:
 
         * `import javax.persistence.EntityManager;`: Importa la interfaz `EntityManager`, que es el principal punto de entrada para realizar operaciones con entidades JPA.
         * `import javax.persistence.EntityManagerFactory;`: Importa la interfaz `EntityManagerFactory`, que crea instancias de `EntityManager`.
         * `import javax.persistence.Persistence;`: Importa la clase `Persistence`, que se utiliza para obtener una instancia de `EntityManagerFactory`.
 
-        **3. Clase `Main`:**
+        3. Clase `Main`:
 
         * `public class Main {` define una clase llamada `Main`, que contiene el punto de entrada de la aplicación.
 
-        **4. Método `main`:**
+        4. Método `main`:
 
         * `public static void main(String[] args) {` es el punto de entrada de la aplicación. Se ejecuta cuando se ejecuta la aplicación.
         * `EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPersistenceUnit");`: Crea una instancia de `EntityManagerFactory` llamada `emf` utilizando el nombre de la unidad de persistencia "myPersistenceUnit" definida en el archivo `persistence.xml`.
@@ -736,32 +736,32 @@ Hay dos formas principales de arrancar Hibernate:
 
         Este código XML es un archivo de configuración de Jakarta Persistence (JPA) llamado `persistence.xml`. Este archivo se utiliza para configurar cómo JPA interactúa con tu base de datos, especificando detalles como la unidad de persistencia, el proveedor de persistencia, las propiedades de la base de datos y las entidades que se gestionarán.
        
-        **1. Declaración del archivo XML:**
+        1. Declaración del archivo XML:
 
         * `<?xml version="1.0" encoding="UTF-8"?>`: Indica que el archivo es XML, la versión y la codificación.
 
-        **2. Espacio de nombres:**
+        2. Espacio de nombres:
 
         * `xmlns="http://xmlns.jcp.org/xml/ns/persistence"`: Define el espacio de nombres para el esquema XML de JPA.
         * `xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"`: Define el espacio de nombres para la validación XML.
         * `xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"`: Especifica la ubicación del esquema XML para la validación.
         * `version="2.2"`: Indica la versión del esquema XML de JPA.
 
-        **3. Unidad de persistencia:**
+        3. Unidad de persistencia:
 
         * `<persistence-unit name="myPersistenceUnit" transaction-type="RESOURCE_LOCAL">`: Define una unidad de persistencia con el nombre "myPersistenceUnit" y un tipo de transacción `RESOURCE_LOCAL`, lo que significa que se manejará localmente por la aplicación.
             * `name="myPersistenceUnit"`:  El nombre de la unidad de persistencia.
             * `transaction-type="RESOURCE_LOCAL"`: Indica que la unidad de persistencia gestionará las transacciones de forma local.
 
-        **4. Proveedor de persistencia:**
+        4. Proveedor de persistencia:
 
         * `<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>`:  Especifica el proveedor de persistencia que se utilizará, en este caso, Hibernate.
 
-        **5. Entidades:**
+        5. Entidades:
 
         * `<class>com.example.entity.Usuario</class>`: Define las clases de entidades que se gestionarán por la unidad de persistencia. En este caso, se gestionará la clase `Usuario` del paquete `com.example.entity`.
 
-        **6. Propiedades de la base de datos:**
+        6. Propiedades de la base de datos:
 
         * `<properties>`: Define las propiedades de conexión a la base de datos. En este caso, se está usando MySQL.
             * `javax.persistence.jdbc.url`: La URL de conexión a la base de datos.
@@ -772,7 +772,7 @@ Hay dos formas principales de arrancar Hibernate:
             * `hibernate.format_sql`:  Formato las consultas SQL impresas en la consola.
             * `hibernate.hbm2ddl.auto`: Define el comportamiento de Hibernate para la creación y actualización de la base de datos.  "update" indica que Hibernate actualizará la base de datos si hay cambios en las entidades.
 
-        **Importante:**
+        Importante:
 
         * El código también incluye una sección comentada para PostgreSQL, que puedes usar si estás trabajando con esta base de datos.
         * Este archivo debe estar ubicado en el directorio `META-INF` de tu proyecto Java.
