@@ -1,5 +1,378 @@
 ---
 sidebar_position: 14
-draft: true
+draft: false
 slug: /semana14
 ---
+import VimeoEmbed from '@site/src/components/VimeoEmbed';
+
+# Semana 14
+
+## Proyecto Spring Data JPA REST con Maven, MySQL y Librerías Necesarias
+
+Este proyecto es un ejemplo básico de cómo crear una API REST con Spring Data JPA, Maven y MySQL.
+
+### **1. Creación del Proyecto:**
+
+* **Utilizar Spring Initializr:** Visita https://start.spring.io/, selecciona **Maven** como build system, **Java** como lenguaje y **Spring Web** y **Spring Data JPA** como dependencias.
+* **Agregar Dependencias Adicionales:** 
+    * **MySQL Connector:** 
+        ```xml
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.32</version>
+        </dependency>
+        ```
+    * **Spring Boot DevTools:** (Opcional, para reiniciar el servidor automáticamente)
+        ```xml
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        ```
+* **Generar Proyecto:** Descarga el proyecto y descomprimelo.
+
+<VimeoEmbed 
+  videoId="1027442031"
+  title="SpringBoot"
+/>
+
+### **2. Crear paquetes:**
+
+* **entities**
+* **repositories**
+* **controllers**
+
+**Estructura del Proyecto:**
+ ```bash        
+    src
+    ┗━ main
+      ┣━ java
+      ┃ ┗━ com
+      ┃ ┃ ┗━ example
+      ┃ ┃ ┃ ┗━ project
+      ┃ ┃ ┃ ┃ ┣━ controllers 
+      ┃ ┃ ┃ ┃ ┃ ┗━ ProductoController.java
+      ┃ ┃ ┃ ┃ ┣━ entities
+      ┃ ┃ ┃ ┃ ┃ ┗━ Producto.java
+      ┃ ┃ ┃ ┃ ┣━ repositories
+      ┃ ┃ ┃ ┃ ┃ ┗━ ProductoRepository.java
+      ┃ ┃ ┃ ┃ ┗━ ProjectApplication.java
+      ┗━ resources
+        ┗━ application.properties 
+    ```
+
+### **2. Configuración de la Base de Datos:**
+
+* **Crear Base de Datos:** Crea una base de datos en MySQL llamada `my_database`.
+* **Crear Tabla:** Crea una tabla llamada `producto` con las siguientes columnas:
+    ```sql
+    CREATE TABLE producto (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nombre VARCHAR(255) NOT NULL,
+        precio DECIMAL(10,2) NOT NULL
+    );
+    ```
+
+### **3. Modelo de Entidad (Producto.java):**
+
+```java
+package com.example.demo.entities;
+
+import jakarta.persistence.*;
+
+@Entity
+public class Producto {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+    private double precio;
+
+    public Producto() {
+
+    }
+
+    public Producto(String nombre, double precio) {
+        this.nombre = nombre;
+        this.precio = precio;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+}
+```
+
+### **4. Repositorio (ProductoRepository.java):**
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.model.Producto;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductoRepository extends JpaRepository<Producto, Long> {
+
+}
+```
+
+### **5. Controlador REST (ProductoController.java):**
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.Producto;
+import com.example.demo.repository.ProductoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/productos")
+public class ProductoController {
+
+    @Autowired
+    private ProductoRepository productoRepository;
+
+    @GetMapping
+    public ResponseEntity<List<Producto>> getAllProductos() {
+        List<Producto> productos = productoRepository.findAll();
+        return new ResponseEntity<>(productos, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
+        Producto producto = productoRepository.findById(id).orElse(null);
+        if (producto == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(producto, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<Producto> createProducto(@RequestBody Producto producto) {
+        Producto savedProducto = productoRepository.save(producto);
+        return new ResponseEntity<>(savedProducto, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> updateProducto(@PathVariable Long id, @RequestBody Producto producto) {
+        Producto existingProducto = productoRepository.findById(id).orElse(null);
+        if (existingProducto == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        existingProducto.setNombre(producto.getNombre());
+        existingProducto.setPrecio(producto.getPrecio());
+        Producto updatedProducto = productoRepository.save(existingProducto);
+        return new ResponseEntity<>(updatedProducto, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteProducto(@PathVariable Long id) {
+        productoRepository.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}
+```
+
+### **6. Aplicación de inicio (Application.java):**
+
+```java
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+### **7. Configuración de Spring Boot (application.properties):**
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/my_database?useUnicode=true&characterEncoding=utf8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=your_password
+spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+spring.jpa.hibernate.ddl-auto=update
+```
+
+**8. Ejecución del Proyecto:**
+
+* Ejecuta el proyecto desde tu IDE o desde la línea de comandos con `mvn spring-boot:run`.
+* La API REST estará disponible en `http://localhost:8080/api/productos`.
+
+**9. Uso de la API:**
+
+* Puedes usar herramientas como Postman o curl para probar las diferentes rutas de la API.
+* **Obtener todos los productos:** GET `http://localhost:8080/api/productos`
+* **Obtener un producto por ID:** GET `http://localhost:8080/api/productos/{id}`
+* **Crear un producto:** POST `http://localhost:8080/api/productos` con un JSON que represente el producto.
+* **Actualizar un producto:** PUT `http://localhost:8080/api/productos/{id}` con un JSON que represente las actualizaciones.
+* **Eliminar un producto:** DELETE `http://localhost:8080/api/productos/{id}`
+
+**10. Notas:**
+
+* Este es un ejemplo básico y puede ser extendido para incluir más funcionalidades como validaciones, manejo de excepciones, paginación, etc.
+* Asegúrate de configurar correctamente la base de datos y las propiedades de conexión en `application.properties`.
+* Puedes usar otras herramientas de prueba de API como Swagger o Spring REST Docs para documentar tu API.
+
+Con este proyecto completo, tienes un punto de partida para crear tus propias API REST con Spring Data JPA, Maven y MySQL. 
+
+## Thunder Client
+
+Thunder Client es una extensión de VS Code que facilita la prueba de APIs. Se caracteriza por ser liviano, simple de usar y contar con funciones como almacenamiento local, sincronización con Git, colecciones para organizar solicitudes, pruebas sin scripting y compatibilidad con CI/CD. La extensión es utilizada por compañías de todo el mundo, incluyendo empresas Fortune 500, bancos, servicios financieros, empresas tecnológicas y gigantes del retail.
+
+[https://www.thunderclient.com/](https://www.thunderclient.com/)
+
+
+## Actividad: Proyecto Integrador 
+
+### API REST para Gestión de [Tema]
+
+**Tema:** Selecciona un tema específico para tu API REST. Por ejemplo:
+
+* **Gestión de Libros:**  
+* **Gestión de Eventos:**
+* **Gestión de Productos de una Tienda Online:**
+* **Gestión de Peliculas/Series:**
+* **Gestión de Pacientes en un Consultorio:**
+
+**Objetivo:** Implementar una API REST completa utilizando Spring Data JPA, Maven y MySQL para la gestión del tema elegido, incluyendo al menos 4 entidades con sus operaciones CRUD (Create, Read, Update, Delete) y realizar peticiones de prueba en Thunder Client.
+
+**Pasos:**
+
+1. **Definición del Tema:** Elige un tema específico que te resulte interesante.
+2. **Diseño del Modelo de Datos:** Identifica las entidades principales para el tema elegido. Debe haber al menos 4 entidades (ej: Libro, Autor, Editorial, Género para el tema "Gestión de Libros").
+3. **Creación del Proyecto Spring Boot:** Crea un nuevo proyecto Spring Boot utilizando Spring Initializr, incluyendo las dependencias necesarias: Spring Web, Spring Data JPA y el conector de MySQL.
+4. **Creación de las Entidades:**  Crea las entidades Java (con anotaciones JPA) que representan cada una de las entidades del modelo de datos.
+5. **Creación de los Repositorios:** Define los repositorios para cada entidad, extendiendo `JpaRepository`.
+6. **Creación de los Controladores REST:** Implementa los controladores REST para cada entidad, definiendo las rutas y los métodos para cada operación CRUD.
+7. **Configuración de la Base de Datos:** Configura la base de datos MySQL con las tablas correspondientes a las entidades creadas.
+8. **Pruebas con Thunder Client:** Crea las peticiones para cada operación CRUD en Thunder Client, utilizando el método HTTP correspondiente (GET, POST, PUT, DELETE) y los parámetros necesarios.
+
+**Ejemplos de Entidades (Gestión de Libros):**
+
+* **Libro:** 
+    * Id (identificador único)
+    * Título
+    * ISBN
+    * Autor (relación con la entidad Autor)
+    * Editorial (relación con la entidad Editorial)
+    * Género (relación con la entidad Género)
+    * Precio
+    * Fecha de Publicación
+* **Autor:** 
+    * Id (identificador único)
+    * Nombre
+    * Apellido
+    * Fecha de Nacimiento
+* **Editorial:** 
+    * Id (identificador único)
+    * Nombre
+    * País
+* **Género:**
+    * Id (identificador único)
+    * Nombre
+
+**Ejemplo de Peticiones en Thunder Client:**
+
+* **GET /libros:**  Obtiene todos los libros.
+* **GET /libros/1:** Obtiene el libro con ID 1.
+* **POST /libros:** Crea un nuevo libro con los datos proporcionados en el cuerpo de la petición.
+* **PUT /libros/1:** Actualiza el libro con ID 1 con los datos proporcionados en el cuerpo de la petición.
+* **DELETE /libros/1:** Elimina el libro con ID 1.
+
+**Entrega:**
+
+* Repositorio del proyecto.
+* Un informe que describa las funcionalidades implementadas, las entidades creadas, las rutas y métodos de la API, y las pruebas realizadas en Thunder Client.
+
+
+### Sugerencias de temas para tu proyecto de API REST:
+
+**1. Gestión de Películas/Series:**
+
+* Entidades: Película, Serie, Director, Actor, Género,  Plataforma de Streaming.
+* Funcionalidades: Buscar películas/series por título, género, director, actor; agregar a "listas de seguimiento"; obtener recomendaciones; gestión de ratings.
+
+**2. Gestión de Restaurantes:**
+
+* Entidades: Restaurante, Plato, Categoría, Mesa, Pedido, Cliente.
+* Funcionalidades:  Buscar restaurantes por ubicación, tipo de cocina, nombre; ver menús; hacer reservas; realizar pedidos online; gestionar pedidos.
+
+**3. Gestión de Eventos:**
+
+* Entidades: Evento, Lugar, Tipo de Evento, Organizador, Invitado, Ticket.
+* Funcionalidades: Crear y gestionar eventos;  vender tickets; consultar información de eventos; administrar listas de invitados; enviar notificaciones. 
+
+**4. Gestión de Viajes:**
+
+* Entidades: Viaje, Destino, Alojamiento, Actividad, Transporte.
+* Funcionalidades: Planificar viajes;  buscar destinos y alojamientos; reservar actividades; gestionar itinerarios; compartir viajes.
+
+**5. Gestión de Tareas:**
+
+* Entidades: Tarea, Proyecto, Categoría, Usuario, Equipo.
+* Funcionalidades: Crear, editar y eliminar tareas;  asignar tareas a usuarios; organizar tareas por proyectos y categorías; establecer prioridades; gestionar la finalización de tareas.
+
+**6. Gestión de Libros:**
+
+* Entidades: Libro, Autor, Editorial, Género,  Biblioteca.
+* Funcionalidades:  Buscar libros por título, autor, género; consultar disponibilidad; realizar préstamos; gestionar devoluciones; gestionar el catálogo de la biblioteca. 
+
+**7. Gestión de Mascotas:**
+
+* Entidades: Mascota, Dueño, Veterinario, Consulta, Vacuna.
+* Funcionalidades: Registrar mascotas; programar consultas; gestionar vacunas;  guardar información médica de la mascota; crear perfiles para mascotas.
+
+**8. Gestión de Música:**
+
+* Entidades: Canción, Artista, Álbum, Género, Playlist.
+* Funcionalidades: Buscar música por título, artista, género; crear playlists; escuchar música;  gestionar listas de reproducción.
+
+**9. Gestión de Proyectos (Scrum):**
+
+* Entidades: Proyecto, Sprint, Tarea, Usuario,  Rol.
+* Funcionalidades:  Gestionar sprints; crear y asignar tareas; realizar el seguimiento del progreso del proyecto; gestionar el backlog de tareas; realizar reuniones de planificación. 
+
+**10. Gestión de Receta:**
+
+* Entidades: Receta, Ingrediente, Categoría, Dificultad, Tiempo de Cocción.
+* Funcionalidades:  Buscar recetas por ingrediente, categoría, dificultad; crear nuevas recetas; guardar recetas favoritas; compartir recetas;  gestionar listas de compras.
+
+
